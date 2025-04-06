@@ -1,12 +1,28 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { FileText, Plus, ExternalLink, Download, MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { useToast } from '@/hooks/use-toast';
 
-const mockContracts = [
+interface ContractType {
+  id: string;
+  propertyId: string;
+  propertyTitle: string;
+  clientName: string;
+  contractType: string;
+  date: string;
+  status: string;
+  value: number;
+}
+
+const mockContracts: ContractType[] = [
   {
     id: '1',
     propertyId: '1',
@@ -49,7 +65,29 @@ const mockContracts = [
   }
 ];
 
+interface ContractFormValues {
+  propertyTitle: string;
+  clientName: string;
+  contractType: string;
+  value: number;
+  status: string;
+}
+
 const ContractsList: React.FC = () => {
+  const [contracts, setContracts] = useState<ContractType[]>(mockContracts);
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  
+  const form = useForm<ContractFormValues>({
+    defaultValues: {
+      propertyTitle: '',
+      clientName: '',
+      contractType: 'Venda',
+      value: 0,
+      status: 'active'
+    }
+  });
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
@@ -66,15 +104,145 @@ const ContractsList: React.FC = () => {
         return <Badge>{status}</Badge>;
     }
   };
+  
+  const onSubmit = (data: ContractFormValues) => {
+    const today = new Date();
+    const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+    
+    const newContract: ContractType = {
+      id: (contracts.length + 1).toString(),
+      propertyId: (contracts.length + 1).toString(),
+      ...data,
+      date: formattedDate
+    };
+    
+    setContracts([newContract, ...contracts]);
+    setOpen(false);
+    form.reset();
+    
+    toast({
+      title: "Contrato adicionado",
+      description: "O contrato foi adicionado com sucesso."
+    });
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Contratos</h1>
-        <Button className="gap-1">
-          <Plus className="h-4 w-4" />
-          Novo Contrato
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-1">
+              <Plus className="h-4 w-4" />
+              Novo Contrato
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Adicionar Novo Contrato</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="propertyTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Imóvel</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Título do imóvel" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="clientName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cliente</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nome do cliente" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contractType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Contrato</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Venda">Venda</SelectItem>
+                          <SelectItem value="Aluguel">Aluguel</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="value"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Valor</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="Valor do contrato" 
+                          {...field} 
+                          onChange={e => field.onChange(Number(e.target.value))} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="active">Ativo</SelectItem>
+                          <SelectItem value="pending">Pendente</SelectItem>
+                          <SelectItem value="expired">Expirado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                
+                <DialogFooter className="pt-4">
+                  <Button type="submit">Adicionar</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card className="p-0">
@@ -92,7 +260,7 @@ const ContractsList: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockContracts.map((contract) => (
+            {contracts.map((contract) => (
               <TableRow key={contract.id}>
                 <TableCell>#{contract.id}</TableCell>
                 <TableCell>{contract.propertyTitle}</TableCell>

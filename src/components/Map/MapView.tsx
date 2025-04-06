@@ -84,7 +84,16 @@ const mockProperties: PropertyType[] = [
 ];
 
 const MapView: React.FC = () => {
-  return <PropertyMap properties={mockProperties} />;
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold tracking-tight">Mapa de Imóveis</h1>
+      </div>
+      <div className="h-[calc(100vh-200px)] w-full bg-gray-100 rounded-lg overflow-hidden border">
+        <PropertyMap properties={mockProperties} />
+      </div>
+    </div>
+  );
 };
 
 export default MapView;

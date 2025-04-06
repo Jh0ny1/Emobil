@@ -4,6 +4,12 @@ import PropertyCard, { PropertyType } from './PropertyCard';
 import PropertyFilters from './PropertyFilters';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock property data
 const mockProperties: PropertyType[] = [
@@ -85,8 +91,38 @@ const mockProperties: PropertyType[] = [
   }
 ];
 
+interface PropertyFormValues {
+  title: string;
+  address: string;
+  city: string;
+  price: number;
+  type: string;
+  status: string;
+  bedrooms: number;
+  bathrooms: number;
+  area: number;
+  image: string;
+}
+
 const PropertiesList: React.FC = () => {
   const [properties, setProperties] = useState<PropertyType[]>(mockProperties);
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  
+  const form = useForm<PropertyFormValues>({
+    defaultValues: {
+      title: '',
+      address: '',
+      city: '',
+      price: 0,
+      type: 'apartment',
+      status: 'available',
+      bedrooms: 1,
+      bathrooms: 1,
+      area: 0,
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1170&auto=format&fit=crop'
+    }
+  });
   
   const handleFilterChange = (filters: any) => {
     let filteredProperties = [...mockProperties];
@@ -133,14 +169,213 @@ const PropertiesList: React.FC = () => {
     setProperties(filteredProperties);
   };
 
+  const onSubmit = (data: PropertyFormValues) => {
+    const newProperty: PropertyType = {
+      id: (properties.length + 1).toString(),
+      ...data
+    };
+    
+    setProperties([newProperty, ...properties]);
+    setOpen(false);
+    form.reset();
+    
+    toast({
+      title: "Imóvel adicionado",
+      description: "O imóvel foi adicionado com sucesso."
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold tracking-tight">Imóveis</h1>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Adicionar Imóvel
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Adicionar Imóvel
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Adicionar Novo Imóvel</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Título do imóvel" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Endereço</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Endereço" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Cidade" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preço</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="Preço" 
+                          {...field} 
+                          onChange={e => field.onChange(Number(e.target.value))} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="apartment">Apartamento</SelectItem>
+                            <SelectItem value="house">Casa</SelectItem>
+                            <SelectItem value="condo">Condomínio</SelectItem>
+                            <SelectItem value="land">Terreno</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="available">Disponível</SelectItem>
+                            <SelectItem value="sold">Vendido</SelectItem>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="bedrooms"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quartos</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min={0}
+                            {...field} 
+                            onChange={e => field.onChange(Number(e.target.value))} 
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="bathrooms"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banheiros</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min={0}
+                            step={0.5}
+                            {...field} 
+                            onChange={e => field.onChange(Number(e.target.value))} 
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="area"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área (m²)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min={0}
+                            {...field} 
+                            onChange={e => field.onChange(Number(e.target.value))} 
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                <DialogFooter className="pt-4">
+                  <Button type="submit">Adicionar</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
       
       <PropertyFilters onFilterChange={handleFilterChange} />

@@ -89,7 +89,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value="all">Todos os Status</SelectItem>
               <SelectItem value="available">Disponível</SelectItem>
               <SelectItem value="sold">Vendido</SelectItem>
               <SelectItem value="pending">Pendente</SelectItem>
@@ -104,7 +104,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
               <SelectValue placeholder="Tipo de Imóvel" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os Tipos</SelectItem>
+              <SelectItem value="all">Todos os Tipos</SelectItem>
               <SelectItem value="house">Casa</SelectItem>
               <SelectItem value="apartment">Apartamento</SelectItem>
               <SelectItem value="condo">Condomínio</SelectItem>
@@ -120,7 +120,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
               <SelectValue placeholder="Cidade" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as Cidades</SelectItem>
+              <SelectItem value="all">Todas as Cidades</SelectItem>
               <SelectItem value="São Paulo">São Paulo</SelectItem>
               <SelectItem value="Rio de Janeiro">Rio de Janeiro</SelectItem>
               <SelectItem value="Belo Horizonte">Belo Horizonte</SelectItem>
