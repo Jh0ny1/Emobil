@@ -15,9 +15,9 @@ interface PropertyMapCardProps {
 
 const PropertyMapCard: React.FC<PropertyMapCardProps> = ({ property, onClose }) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'BRL',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -33,6 +33,19 @@ const PropertyMapCard: React.FC<PropertyMapCardProps> = ({ property, onClose }) 
         return 'status-pending';
       default:
         return '';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'available':
+        return 'Disponível';
+      case 'sold':
+        return 'Vendido';
+      case 'pending':
+        return 'Pendente';
+      default:
+        return status;
     }
   };
 
@@ -58,7 +71,7 @@ const PropertyMapCard: React.FC<PropertyMapCardProps> = ({ property, onClose }) 
             getStatusClass(property.status)
           )}
         >
-          {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+          {getStatusText(property.status)}
         </Badge>
       </div>
       
@@ -76,13 +89,13 @@ const PropertyMapCard: React.FC<PropertyMapCardProps> = ({ property, onClose }) 
         <div className="grid grid-cols-3 gap-2 text-xs mb-3">
           {property.bedrooms !== undefined && (
             <div className="flex items-center">
-              <span>{property.bedrooms} Beds</span>
+              <span>{property.bedrooms} Quartos</span>
             </div>
           )}
           
           {property.bathrooms !== undefined && (
             <div className="flex items-center">
-              <span>{property.bathrooms} Baths</span>
+              <span>{property.bathrooms} Banheiros</span>
             </div>
           )}
           
@@ -95,7 +108,7 @@ const PropertyMapCard: React.FC<PropertyMapCardProps> = ({ property, onClose }) 
         
         <Button asChild size="sm" className="w-full gap-1">
           <Link to={`/properties/${property.id}`}>
-            View Details
+            Ver Detalhes
           </Link>
         </Button>
       </CardContent>

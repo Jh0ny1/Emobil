@@ -2,13 +2,13 @@
 import React from 'react';
 import PropertyMap from './PropertyMap';
 
-// Mock property data - we're reusing the same property structures as in the PropertyCard component
+// Dados de propriedades mockados - usando as mesmas estruturas que no componente PropertyCard
 const mockProperties = [
   {
     id: '1',
-    title: 'Modern Apartment in Downtown',
-    address: '123 Main Street',
-    city: 'New York',
+    title: 'Apartamento Moderno no Centro',
+    address: 'Rua Principal, 123',
+    city: 'São Paulo',
     price: 750000,
     type: 'apartment',
     status: 'available',
@@ -19,9 +19,9 @@ const mockProperties = [
   },
   {
     id: '2',
-    title: 'Spacious Family House with Garden',
-    address: '456 Oak Avenue',
-    city: 'Los Angeles',
+    title: 'Casa Espaçosa com Jardim',
+    address: 'Avenida dos Carvalhos, 456',
+    city: 'Rio de Janeiro',
     price: 1250000,
     type: 'house',
     status: 'available',
@@ -32,9 +32,9 @@ const mockProperties = [
   },
   {
     id: '3',
-    title: 'Luxury Condo with Ocean View',
-    address: '789 Beach Road',
-    city: 'Miami',
+    title: 'Condomínio de Luxo com Vista para o Mar',
+    address: 'Rua da Praia, 789',
+    city: 'Florianópolis',
     price: 980000,
     type: 'condo',
     status: 'sold',
@@ -45,9 +45,9 @@ const mockProperties = [
   },
   {
     id: '4',
-    title: 'Cozy Studio in Historic District',
-    address: '101 Vine Street',
-    city: 'San Francisco',
+    title: 'Estúdio Aconchegante no Centro Histórico',
+    address: 'Rua da Videira, 101',
+    city: 'Salvador',
     price: 550000,
     type: 'apartment',
     status: 'pending',
@@ -58,9 +58,9 @@ const mockProperties = [
   },
   {
     id: '5',
-    title: 'Renovated Brownstone Townhouse',
-    address: '202 Park Avenue',
-    city: 'Chicago',
+    title: 'Sobrado Renovado no Bairro Nobre',
+    address: 'Avenida do Parque, 202',
+    city: 'Curitiba',
     price: 895000,
     type: 'house',
     status: 'available',
@@ -71,9 +71,9 @@ const mockProperties = [
   },
   {
     id: '6',
-    title: 'Development Land with Mountain View',
-    address: '303 Highland Road',
-    city: 'Denver',
+    title: 'Terreno com Vista para a Montanha',
+    address: 'Estrada das Serras, 303',
+    city: 'Belo Horizonte',
     price: 350000,
     type: 'land',
     status: 'available',

@@ -10,6 +10,8 @@ import PropertiesList from "./components/Properties/PropertiesList";
 import PropertyDetails from "./components/Properties/PropertyDetails";
 import ClientsList from "./components/Clients/ClientsList";
 import VisitsList from "./components/Visits/VisitsList";
+import ContractsList from "./components/Contracts/ContractsList";
+import CommissionsList from "./components/Commissions/CommissionsList";
 import MapView from "./components/Map/MapView";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +32,8 @@ const App = () => (
           <Route path="/properties/:id" element={<MainLayout><PropertyDetails /></MainLayout>} />
           <Route path="/clients" element={<MainLayout><ClientsList /></MainLayout>} />
           <Route path="/visits" element={<MainLayout><VisitsList /></MainLayout>} />
+          <Route path="/contracts" element={<MainLayout><ContractsList /></MainLayout>} />
+          <Route path="/commissions" element={<MainLayout><CommissionsList /></MainLayout>} />
           <Route path="/map" element={<MainLayout><MapView /></MainLayout>} />
           
           {/* Rota de captura */}

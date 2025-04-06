@@ -15,7 +15,7 @@ const Navbar: React.FC = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
-              placeholder="Search properties, clients..."
+              placeholder="Buscar imóveis, clientes..."
               className="pl-10 h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
             size="icon"
             onClick={toggleTheme}
             className="text-muted-foreground hover:text-foreground"
-            aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            aria-label={theme === 'light' ? 'Mudar para modo escuro' : 'Mudar para modo claro'}
           >
             {theme === 'light' ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="hidden md:block text-right">
               <p className="text-sm font-medium">Sarah Johnson</p>
-              <p className="text-xs text-muted-foreground">Property Manager</p>
+              <p className="text-xs text-muted-foreground">Corretora de Imóveis</p>
             </div>
             <UserCircle className="h-8 w-8 text-muted-foreground" />
           </div>
