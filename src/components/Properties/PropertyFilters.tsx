@@ -49,7 +49,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search properties..."
+            placeholder="Pesquisar imóveis..."
             value={filters.search || ''}
             onChange={handleSearchChange}
             className="pl-10"
@@ -63,7 +63,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
             onClick={() => setIsFiltersVisible(!isFiltersVisible)}
           >
             <Filter className="h-4 w-4" />
-            Filters
+            Filtros
           </Button>
           
           {Object.keys(filters).length > 0 && (
@@ -73,7 +73,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
               onClick={resetFilters}
             >
               <X className="h-4 w-4" />
-              Clear
+              Limpar
             </Button>
           )}
         </div>
@@ -89,10 +89,10 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
-              <SelectItem value="available">Available</SelectItem>
-              <SelectItem value="sold">Sold</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value="available">Disponível</SelectItem>
+              <SelectItem value="sold">Vendido</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
             </SelectContent>
           </Select>
           
@@ -101,14 +101,14 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
             onValueChange={(value) => handleFilterChange('type', value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Property Type" />
+              <SelectValue placeholder="Tipo de Imóvel" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
-              <SelectItem value="house">House</SelectItem>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="condo">Condo</SelectItem>
-              <SelectItem value="land">Land</SelectItem>
+              <SelectItem value="">Todos os Tipos</SelectItem>
+              <SelectItem value="house">Casa</SelectItem>
+              <SelectItem value="apartment">Apartamento</SelectItem>
+              <SelectItem value="condo">Condomínio</SelectItem>
+              <SelectItem value="land">Terreno</SelectItem>
             </SelectContent>
           </Select>
           
@@ -117,28 +117,29 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({ onFilterChange }) => 
             onValueChange={(value) => handleFilterChange('city', value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="City" />
+              <SelectValue placeholder="Cidade" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Cities</SelectItem>
-              <SelectItem value="New York">New York</SelectItem>
-              <SelectItem value="Los Angeles">Los Angeles</SelectItem>
-              <SelectItem value="Chicago">Chicago</SelectItem>
-              <SelectItem value="San Francisco">San Francisco</SelectItem>
-              <SelectItem value="Miami">Miami</SelectItem>
+              <SelectItem value="">Todas as Cidades</SelectItem>
+              <SelectItem value="São Paulo">São Paulo</SelectItem>
+              <SelectItem value="Rio de Janeiro">Rio de Janeiro</SelectItem>
+              <SelectItem value="Belo Horizonte">Belo Horizonte</SelectItem>
+              <SelectItem value="Salvador">Salvador</SelectItem>
+              <SelectItem value="Curitiba">Curitiba</SelectItem>
+              <SelectItem value="Florianópolis">Florianópolis</SelectItem>
             </SelectContent>
           </Select>
           
           <div className="flex gap-2">
             <Input
               type="number"
-              placeholder="Min Price"
+              placeholder="Preço Mín"
               value={filters.minPrice || ''}
               onChange={(e) => handleFilterChange('minPrice', e.target.value)}
             />
             <Input
               type="number"
-              placeholder="Max Price"
+              placeholder="Preço Máx"
               value={filters.maxPrice || ''}
               onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
             />

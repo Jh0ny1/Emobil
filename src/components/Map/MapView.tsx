@@ -1,9 +1,10 @@
 
 import React from 'react';
 import PropertyMap from './PropertyMap';
+import { PropertyType } from '../Properties/PropertyCard';
 
 // Dados de propriedades mockados - usando as mesmas estruturas que no componente PropertyCard
-const mockProperties = [
+const mockProperties: PropertyType[] = [
   {
     id: '1',
     title: 'Apartamento Moderno no Centro',

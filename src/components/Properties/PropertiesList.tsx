@@ -9,9 +9,9 @@ import { Plus } from 'lucide-react';
 const mockProperties: PropertyType[] = [
   {
     id: '1',
-    title: 'Modern Apartment in Downtown',
-    address: '123 Main Street',
-    city: 'New York',
+    title: 'Apartamento Moderno no Centro',
+    address: 'Rua Principal, 123',
+    city: 'São Paulo',
     price: 750000,
     type: 'apartment',
     status: 'available',
@@ -22,9 +22,9 @@ const mockProperties: PropertyType[] = [
   },
   {
     id: '2',
-    title: 'Spacious Family House with Garden',
-    address: '456 Oak Avenue',
-    city: 'Los Angeles',
+    title: 'Casa Espaçosa com Jardim',
+    address: 'Avenida dos Carvalhos, 456',
+    city: 'Rio de Janeiro',
     price: 1250000,
     type: 'house',
     status: 'available',
@@ -35,9 +35,9 @@ const mockProperties: PropertyType[] = [
   },
   {
     id: '3',
-    title: 'Luxury Condo with Ocean View',
-    address: '789 Beach Road',
-    city: 'Miami',
+    title: 'Condomínio de Luxo com Vista para o Mar',
+    address: 'Rua da Praia, 789',
+    city: 'Florianópolis',
     price: 980000,
     type: 'condo',
     status: 'sold',
@@ -48,9 +48,9 @@ const mockProperties: PropertyType[] = [
   },
   {
     id: '4',
-    title: 'Cozy Studio in Historic District',
-    address: '101 Vine Street',
-    city: 'San Francisco',
+    title: 'Estúdio Aconchegante no Centro Histórico',
+    address: 'Rua da Videira, 101',
+    city: 'Salvador',
     price: 550000,
     type: 'apartment',
     status: 'pending',
@@ -61,9 +61,9 @@ const mockProperties: PropertyType[] = [
   },
   {
     id: '5',
-    title: 'Renovated Brownstone Townhouse',
-    address: '202 Park Avenue',
-    city: 'Chicago',
+    title: 'Sobrado Renovado no Bairro Nobre',
+    address: 'Avenida do Parque, 202',
+    city: 'Curitiba',
     price: 895000,
     type: 'house',
     status: 'available',
@@ -74,9 +74,9 @@ const mockProperties: PropertyType[] = [
   },
   {
     id: '6',
-    title: 'Development Land with Mountain View',
-    address: '303 Highland Road',
-    city: 'Denver',
+    title: 'Terreno com Vista para a Montanha',
+    address: 'Estrada das Serras, 303',
+    city: 'Belo Horizonte',
     price: 350000,
     type: 'land',
     status: 'available',
@@ -136,10 +136,10 @@ const PropertiesList: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Properties</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Imóveis</h1>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Add Property
+          Adicionar Imóvel
         </Button>
       </div>
       
@@ -153,8 +153,8 @@ const PropertiesList: React.FC = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium">No properties found</h3>
-          <p className="text-muted-foreground mt-1">Try adjusting your filters or search criteria</p>
+          <h3 className="text-lg font-medium">Nenhum imóvel encontrado</h3>
+          <p className="text-muted-foreground mt-1">Tente ajustar seus filtros ou critérios de busca</p>
         </div>
       )}
     </div>
