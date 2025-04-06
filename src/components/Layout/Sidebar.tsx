@@ -10,21 +10,20 @@ import {
   Calendar, 
   FileText, 
   DollarSign, 
-  Map, 
-  Settings
+  Map
 } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const navigationItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'Properties', icon: Home, path: '/properties' },
-    { name: 'Clients', icon: Users, path: '/clients' },
-    { name: 'Visits', icon: Calendar, path: '/visits' },
-    { name: 'Contracts', icon: FileText, path: '/contracts' },
-    { name: 'Commissions', icon: DollarSign, path: '/commissions' },
-    { name: 'Map', icon: Map, path: '/map' },
+    { name: 'Painel', icon: LayoutDashboard, path: '/dashboard' },
+    { name: 'Imóveis', icon: Home, path: '/properties' },
+    { name: 'Clientes', icon: Users, path: '/clients' },
+    { name: 'Visitas', icon: Calendar, path: '/visits' },
+    { name: 'Contratos', icon: FileText, path: '/contracts' },
+    { name: 'Comissões', icon: DollarSign, path: '/commissions' },
+    { name: 'Mapa', icon: Map, path: '/map' },
   ];
 
   return (
@@ -46,7 +45,7 @@ const Sidebar: React.FC = () => {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded-md hover:bg-sidebar-accent text-sidebar-foreground"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
         >
           <ChevronLeft className={cn("h-5 w-5 transition-transform", collapsed && "rotate-180")} />
         </button>
@@ -73,22 +72,6 @@ const Sidebar: React.FC = () => {
           ))}
         </ul>
       </nav>
-
-      <div className="p-4 border-t">
-        <Link
-          to="/settings"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
-            "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-sidebar-ring",
-            "text-sidebar-foreground",
-            collapsed && "justify-center"
-          )}
-        >
-          <Settings className="h-5 w-5 flex-shrink-0" />
-          {!collapsed && <span>Settings</span>}
-        </Link>
-      </div>
     </aside>
   );
 };

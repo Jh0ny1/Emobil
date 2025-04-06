@@ -1,103 +1,102 @@
 
 import React from 'react';
-import { LayoutGrid } from '@/components/ui/chart';
 import StatCard from './StatCard';
 import ChartCard from './ChartCard';
 import QuickActionCard from './QuickActionCard';
 import { Home, Calendar, FileText, DollarSign, Plus } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  // Mock data for KPI cards
+  // Dados de exemplo para os cartões KPI
   const kpiData = [
     { 
-      title: 'Total Properties', 
+      title: 'Total de Imóveis', 
       value: '126', 
       change: { value: 12, trend: 'up' as const }, 
-      trend: 'last month',
+      trend: 'último mês',
       icon: Home
     },
     { 
-      title: 'Available Properties', 
+      title: 'Imóveis Disponíveis', 
       value: '79', 
       change: { value: 5, trend: 'up' as const }, 
-      trend: 'last month',
+      trend: 'último mês',
       icon: Home
     },
     { 
-      title: 'Scheduled Visits', 
+      title: 'Visitas Agendadas', 
       value: '34', 
       change: { value: 2, trend: 'down' as const }, 
-      trend: 'last week',
+      trend: 'última semana',
       icon: Calendar
     },
     { 
-      title: 'Contracts Closed', 
+      title: 'Contratos Fechados', 
       value: '17', 
       change: { value: 8, trend: 'up' as const }, 
-      trend: 'last month',
+      trend: 'último mês',
       icon: FileText
     },
     { 
-      title: 'Total Commissions', 
-      value: '$283,546', 
+      title: 'Total de Comissões', 
+      value: 'R$ 283.546', 
       change: { value: 15, trend: 'up' as const }, 
-      trend: 'last month',
+      trend: 'último mês',
       icon: DollarSign
     }
   ];
 
-  // Mock data for charts
+  // Dados de exemplo para gráficos
   const monthlySalesData = [
     { name: 'Jan', value: 12 },
-    { name: 'Feb', value: 19 },
+    { name: 'Fev', value: 19 },
     { name: 'Mar', value: 15 },
-    { name: 'Apr', value: 21 },
-    { name: 'May', value: 28 },
+    { name: 'Abr', value: 21 },
+    { name: 'Mai', value: 28 },
     { name: 'Jun', value: 23 },
     { name: 'Jul', value: 31 },
-    { name: 'Aug', value: 35 },
-    { name: 'Sep', value: 26 },
-    { name: 'Oct', value: 29 },
+    { name: 'Ago', value: 35 },
+    { name: 'Set', value: 26 },
+    { name: 'Out', value: 29 },
     { name: 'Nov', value: 32 },
-    { name: 'Dec', value: 38 }
+    { name: 'Dez', value: 38 }
   ];
 
   const propertiesStatusData = [
-    { name: 'Available', value: 79 },
-    { name: 'Sold', value: 47 },
-    { name: 'Pending', value: 23 }
+    { name: 'Disponível', value: 79 },
+    { name: 'Vendido', value: 47 },
+    { name: 'Pendente', value: 23 }
   ];
 
   const commissionsByAgentData = [
-    { name: 'John', value: 48500 },
-    { name: 'Sarah', value: 63200 },
-    { name: 'Mike', value: 42700 },
-    { name: 'Lisa', value: 57100 },
-    { name: 'David', value: 72000 }
+    { name: 'João', value: 48500 },
+    { name: 'Sara', value: 63200 },
+    { name: 'Miguel', value: 42700 },
+    { name: 'Luísa', value: 57100 },
+    { name: 'Davi', value: 72000 }
   ];
 
-  // Mock quick actions
+  // Ações rápidas de exemplo
   const quickActions = [
     { 
-      label: 'Add New Property', 
+      label: 'Adicionar Imóvel', 
       icon: Plus, 
-      onClick: () => console.log('Add property clicked') 
+      onClick: () => console.log('Adicionar imóvel clicado') 
     },
     { 
-      label: "View Today's Visits", 
+      label: "Ver Visitas de Hoje", 
       icon: Calendar, 
-      onClick: () => console.log("View today's visits clicked") 
+      onClick: () => console.log("Ver visitas de hoje clicado") 
     },
     { 
-      label: 'Register New Contract', 
+      label: 'Registrar Novo Contrato', 
       icon: FileText, 
-      onClick: () => console.log('Register contract clicked') 
+      onClick: () => console.log('Registrar contrato clicado') 
     }
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Painel</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {kpiData.map((kpi, index) => (
@@ -114,22 +113,22 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <ChartCard
-          title="Monthly Sales"
-          description="Number of properties sold per month"
+          title="Vendas Mensais"
+          description="Número de imóveis vendidos por mês"
           data={monthlySalesData}
           type="area"
         />
         
         <ChartCard
-          title="Properties by Status"
+          title="Imóveis por Status"
           data={propertiesStatusData}
           type="pie"
           colors={['#10b981', '#3b82f6', '#f59e0b']}
         />
         
         <ChartCard
-          title="Commissions per Agent"
-          description="Total commissions earned by top agents"
+          title="Comissões por Corretor"
+          description="Total de comissões ganhas pelos principais corretores"
           data={commissionsByAgentData}
           type="bar"
         />
@@ -137,12 +136,12 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <QuickActionCard
-          title="Quick Actions"
-          description="Common tasks you might want to perform"
+          title="Ações Rápidas"
+          description="Tarefas comuns que você pode querer realizar"
           actions={quickActions}
         />
 
-        {/* Additional cards can be added here in the future */}
+        {/* Cartões adicionais podem ser adicionados aqui no futuro */}
       </div>
     </div>
   );
