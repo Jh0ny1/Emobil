@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Bed, Bath, Maximize, Phone, Mail, Calendar, FileText } from 'lucide-react';
+import { ArrowLeft, Bed, Bath, Maximize, Phone, Mail, Calendar, FileText, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
