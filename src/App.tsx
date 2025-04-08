@@ -14,33 +14,87 @@ import ContractsList from "./components/Contracts/ContractsList";
 import CommissionsList from "./components/Commissions/CommissionsList";
 import MapView from "./components/Map/MapView";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
+// Componente para proteger rotas
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<Login />} />
+      
+      {/* Rotas protegidas */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <MainLayout><Dashboard /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/properties" element={
+        <ProtectedRoute>
+          <MainLayout><PropertiesList /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/properties/:id" element={
+        <ProtectedRoute>
+          <MainLayout><PropertyDetails /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/clients" element={
+        <ProtectedRoute>
+          <MainLayout><ClientsList /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/visits" element={
+        <ProtectedRoute>
+          <MainLayout><VisitsList /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/contracts" element={
+        <ProtectedRoute>
+          <MainLayout><ContractsList /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/commissions" element={
+        <ProtectedRoute>
+          <MainLayout><CommissionsList /></MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/map" element={
+        <ProtectedRoute>
+          <MainLayout><MapView /></MainLayout>
+        </ProtectedRoute>
+      } />
+      
+      {/* Rota de captura */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
-          {/* Rotas do painel */}
-          <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
-          <Route path="/properties" element={<MainLayout><PropertiesList /></MainLayout>} />
-          <Route path="/properties/:id" element={<MainLayout><PropertyDetails /></MainLayout>} />
-          <Route path="/clients" element={<MainLayout><ClientsList /></MainLayout>} />
-          <Route path="/visits" element={<MainLayout><VisitsList /></MainLayout>} />
-          <Route path="/contracts" element={<MainLayout><ContractsList /></MainLayout>} />
-          <Route path="/commissions" element={<MainLayout><CommissionsList /></MainLayout>} />
-          <Route path="/map" element={<MainLayout><MapView /></MainLayout>} />
-          
-          {/* Rota de captura */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

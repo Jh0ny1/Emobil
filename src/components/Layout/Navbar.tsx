@@ -1,11 +1,13 @@
 
 import React from 'react';
-import { Bell, Search, UserCircle } from 'lucide-react';
+import { Bell, Search, LogOut, UserCircle } from 'lucide-react';
 import { useTheme } from '../ThemeProvider';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
@@ -43,11 +45,21 @@ const Navbar: React.FC = () => {
           
           <div className="flex items-center gap-2">
             <div className="hidden md:block text-right">
-              <p className="text-sm font-medium">Sarah Johnson</p>
-              <p className="text-xs text-muted-foreground">Corretora de Imóveis</p>
+              <p className="text-sm font-medium">{user?.name || 'Usuário'}</p>
+              <p className="text-xs text-muted-foreground">{user?.role === 'admin' ? 'Administrador' : 'Corretor de Imóveis'}</p>
             </div>
             <UserCircle className="h-8 w-8 text-muted-foreground" />
           </div>
+
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={logout} 
+            className="text-muted-foreground hover:text-destructive"
+            aria-label="Sair do sistema"
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </header>
