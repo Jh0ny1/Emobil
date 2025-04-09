@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
@@ -105,7 +105,7 @@ const CommissionsList: React.FC = () => {
   });
 
   // Reset form when dialog opens/closes
-  React.useEffect(() => {
+  useEffect(() => {
     if (open && editingCommission) {
       form.reset({
         agentName: editingCommission.agentName,
@@ -124,6 +124,19 @@ const CommissionsList: React.FC = () => {
       });
     }
   }, [open, editingCommission, form]);
+
+  // Clean up when dialog closes
+  useEffect(() => {
+    if (!open) {
+      // Add a small delay before resetting the editing state
+      // to prevent state updates when component is unmounting
+      const timer = setTimeout(() => {
+        setEditingCommission(null);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -164,7 +177,6 @@ const CommissionsList: React.FC = () => {
       );
       
       setCommissions(updatedCommissions);
-      setEditingCommission(null);
       toast({
         title: "Comissão atualizada",
         description: "A comissão foi atualizada com sucesso."
@@ -188,7 +200,6 @@ const CommissionsList: React.FC = () => {
     }
     
     setOpen(false);
-    form.reset();
   };
 
   const handleEditCommission = (commission: CommissionType) => {
@@ -238,7 +249,11 @@ const CommissionsList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Comissões</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(newOpen) => {
+          setOpen(newOpen);
+          // If dialog is closing, don't immediately reset the form
+          // The cleanup effect will handle this after a delay
+        }}>
           <DialogTrigger asChild>
             <Button className="gap-1">
               <Plus className="h-4 w-4" />
@@ -347,7 +362,14 @@ const CommissionsList: React.FC = () => {
       </div>
 
       {/* View Commission Dialog */}
-      <Dialog open={!!viewingCommission} onOpenChange={(open) => !open && setViewingCommission(null)}>
+      <Dialog 
+        open={!!viewingCommission} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setViewingCommission(null);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Detalhes da Comissão</DialogTitle>
