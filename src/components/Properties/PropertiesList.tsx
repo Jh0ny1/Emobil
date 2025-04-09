@@ -1,11 +1,10 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropertyCard, { PropertyType } from './PropertyCard';
 import PropertyFilters from './PropertyFilters';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Upload, X, Image } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
@@ -87,7 +86,7 @@ const mockProperties: PropertyType[] = [
     type: 'land',
     status: 'available',
     area: 1200,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1332&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1132&auto=format&fit=crop'
   }
 ];
 
@@ -96,8 +95,8 @@ interface PropertyFormValues {
   address: string;
   city: string;
   price: number;
-  type: string;
-  status: string;
+  type: 'house' | 'apartment' | 'condo' | 'land';
+  status: 'available' | 'sold' | 'pending';
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -107,6 +106,8 @@ interface PropertyFormValues {
 const PropertiesList: React.FC = () => {
   const [properties, setProperties] = useState<PropertyType[]>(mockProperties);
   const [open, setOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   const form = useForm<PropertyFormValues>({
@@ -120,7 +121,7 @@ const PropertiesList: React.FC = () => {
       bedrooms: 1,
       bathrooms: 1,
       area: 0,
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1170&auto=format&fit=crop'
+      image: ''
     }
   });
   
@@ -169,7 +170,42 @@ const PropertiesList: React.FC = () => {
     setProperties(filteredProperties);
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Erro no upload",
+          description: "O arquivo selecionado não é uma imagem.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImage(imageUrl);
+      form.setValue('image', imageUrl);
+    }
+  };
+
+  const clearImageUpload = () => {
+    setPreviewImage(null);
+    form.setValue('image', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const onSubmit = (data: PropertyFormValues) => {
+    if (!data.image) {
+      toast({
+        title: "Erro ao adicionar imóvel",
+        description: "Por favor, adicione uma imagem do imóvel.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newProperty: PropertyType = {
       id: (properties.length + 1).toString(),
       ...data
@@ -178,6 +214,7 @@ const PropertiesList: React.FC = () => {
     setProperties([newProperty, ...properties]);
     setOpen(false);
     form.reset();
+    setPreviewImage(null);
     
     toast({
       title: "Imóvel adicionado",
@@ -185,18 +222,26 @@ const PropertiesList: React.FC = () => {
     });
   };
 
+  const resetForm = () => {
+    form.reset();
+    setPreviewImage(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold tracking-tight">Imóveis</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(isOpen) => {
+          setOpen(isOpen);
+          if (!isOpen) resetForm();
+        }}>
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
               Adicionar Imóvel
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Adicionar Novo Imóvel</DialogTitle>
             </DialogHeader>
@@ -211,6 +256,7 @@ const PropertiesList: React.FC = () => {
                       <FormControl>
                         <Input placeholder="Título do imóvel" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -224,6 +270,7 @@ const PropertiesList: React.FC = () => {
                       <FormControl>
                         <Input placeholder="Endereço" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -237,6 +284,7 @@ const PropertiesList: React.FC = () => {
                       <FormControl>
                         <Input placeholder="Cidade" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -255,6 +303,7 @@ const PropertiesList: React.FC = () => {
                           onChange={e => field.onChange(Number(e.target.value))} 
                         />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -282,6 +331,7 @@ const PropertiesList: React.FC = () => {
                             <SelectItem value="land">Terreno</SelectItem>
                           </SelectContent>
                         </Select>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -307,6 +357,7 @@ const PropertiesList: React.FC = () => {
                             <SelectItem value="pending">Pendente</SelectItem>
                           </SelectContent>
                         </Select>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -327,6 +378,7 @@ const PropertiesList: React.FC = () => {
                             onChange={e => field.onChange(Number(e.target.value))} 
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -346,6 +398,7 @@ const PropertiesList: React.FC = () => {
                             onChange={e => field.onChange(Number(e.target.value))} 
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -364,10 +417,66 @@ const PropertiesList: React.FC = () => {
                             onChange={e => field.onChange(Number(e.target.value))} 
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+                
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem className="space-y-4">
+                      <FormLabel>Imagem do Imóvel</FormLabel>
+                      <FormControl>
+                        <div className="grid gap-4">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            id="property-image"
+                          />
+                          {!previewImage ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-40 flex flex-col items-center justify-center gap-2 border-dashed"
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              <Image className="h-10 w-10 text-muted-foreground" />
+                              <span>Clique para adicionar imagem</span>
+                            </Button>
+                          ) : (
+                            <div className="relative h-40">
+                              <img
+                                src={previewImage}
+                                alt="Preview"
+                                className="h-full w-full object-cover rounded-md"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute top-2 right-2"
+                                onClick={clearImageUpload}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                          <input
+                            type="hidden"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
                 <DialogFooter className="pt-4">
                   <Button type="submit">Adicionar</Button>
