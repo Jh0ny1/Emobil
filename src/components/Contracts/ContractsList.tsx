@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Plus, ExternalLink, Download, MoreHorizontal } from 'lucide-react';
+import { FileText, Plus, ExternalLink, Download, MoreHorizontal, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
@@ -20,6 +21,7 @@ interface ContractType {
   date: string;
   status: string;
   value: number;
+  documentUrl?: string;
 }
 
 const mockContracts: ContractType[] = [
@@ -71,11 +73,15 @@ interface ContractFormValues {
   contractType: string;
   value: number;
   status: string;
+  document?: FileList;
 }
 
 const ContractsList: React.FC = () => {
   const [contracts, setContracts] = useState<ContractType[]>(mockContracts);
   const [open, setOpen] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
   const form = useForm<ContractFormValues>({
@@ -85,6 +91,12 @@ const ContractsList: React.FC = () => {
       contractType: 'Venda',
       value: 0,
       status: 'active'
+    }
+  });
+
+  const uploadForm = useForm<{document: FileList | null}>({
+    defaultValues: {
+      document: null
     }
   });
 
@@ -116,6 +128,14 @@ const ContractsList: React.FC = () => {
       date: formattedDate
     };
     
+    // Handle document file if it exists
+    if (data.document && data.document.length > 0) {
+      const file = data.document[0];
+      // In a real app, we would upload this to a server and get a URL back
+      // For this demo, we'll create a fake URL
+      newContract.documentUrl = URL.createObjectURL(file);
+    }
+    
     setContracts([newContract, ...contracts]);
     setOpen(false);
     form.reset();
@@ -124,6 +144,60 @@ const ContractsList: React.FC = () => {
       title: "Contrato adicionado",
       description: "O contrato foi adicionado com sucesso."
     });
+  };
+
+  const handleUploadClick = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setUploadDialogOpen(true);
+  };
+
+  const handleDocumentUpload = (data: {document: FileList | null}) => {
+    if (selectedContractId && data.document && data.document.length > 0) {
+      const file = data.document[0];
+      
+      // Check if file is a PDF
+      if (file.type !== 'application/pdf') {
+        toast({
+          title: "Erro ao fazer upload",
+          description: "Por favor, selecione um arquivo PDF.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // In a real app, we would upload this to a server
+      // For this demo, we'll create a URL from the file
+      const documentUrl = URL.createObjectURL(file);
+      
+      // Update the contract with the document URL
+      setContracts(contracts.map(contract => 
+        contract.id === selectedContractId 
+          ? { ...contract, documentUrl } 
+          : contract
+      ));
+      
+      setUploadDialogOpen(false);
+      uploadForm.reset();
+      
+      toast({
+        title: "Documento anexado",
+        description: `O arquivo "${file.name}" foi anexado ao contrato.`
+      });
+    }
+  };
+
+  const handleDownload = (contract: ContractType) => {
+    if (contract.documentUrl) {
+      // In a real app, this would download from the server
+      // For this demo, we'll open the URL in a new tab
+      window.open(contract.documentUrl, '_blank');
+    } else {
+      toast({
+        title: "Documento não disponível",
+        description: "Este contrato não possui um documento anexado.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -140,6 +214,9 @@ const ContractsList: React.FC = () => {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Adicionar Novo Contrato</DialogTitle>
+              <DialogDescription>
+                Preencha os detalhes do contrato. Você pode anexar um documento PDF opcional.
+              </DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -236,6 +313,29 @@ const ContractsList: React.FC = () => {
                   )}
                 />
                 
+                <FormField
+                  control={form.control}
+                  name="document"
+                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                    <FormItem>
+                      <FormLabel>Documento (PDF)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept=".pdf"
+                          onChange={(e) => {
+                            onChange(e.target.files);
+                          }}
+                          {...fieldProps}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Selecione um arquivo PDF do contrato (opcional).
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                
                 <DialogFooter className="pt-4">
                   <Button type="submit">Adicionar</Button>
                 </DialogFooter>
@@ -244,6 +344,46 @@ const ContractsList: React.FC = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Upload Document Dialog */}
+      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Anexar Documento</DialogTitle>
+            <DialogDescription>
+              Selecione um arquivo PDF para anexar a este contrato.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...uploadForm}>
+            <form onSubmit={uploadForm.handleSubmit(handleDocumentUpload)} className="space-y-4">
+              <FormField
+                control={uploadForm.control}
+                name="document"
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem>
+                    <FormLabel>Documento (PDF)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept=".pdf"
+                        ref={fileInputRef}
+                        onChange={(e) => {
+                          onChange(e.target.files);
+                        }}
+                        {...fieldProps}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="pt-4">
+                <Button type="submit">Anexar</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       <Card className="p-0">
         <Table>
@@ -271,8 +411,20 @@ const ContractsList: React.FC = () => {
                 <TableCell>{getStatusBadge(contract.status)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => handleDownload(contract)}
+                      className={!contract.documentUrl ? "text-muted-foreground" : ""}
+                    >
                       <Download className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => handleUploadClick(contract.id)}
+                    >
+                      <Upload className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon">
                       <ExternalLink className="h-4 w-4" />
