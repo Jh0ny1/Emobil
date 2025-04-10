@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -104,7 +103,6 @@ const CommissionsList: React.FC = () => {
     }
   });
 
-  // Reset form when dialog opens/closes
   useEffect(() => {
     if (open && editingCommission) {
       form.reset({
@@ -125,14 +123,11 @@ const CommissionsList: React.FC = () => {
     }
   }, [open, editingCommission, form]);
 
-  // Clean up when dialog closes
   useEffect(() => {
     if (!open) {
-      // Add a small delay before resetting the editing state
-      // to prevent state updates when component is unmounting
       const timer = setTimeout(() => {
         setEditingCommission(null);
-      }, 100);
+      }, 200);
       
       return () => clearTimeout(timer);
     }
@@ -166,45 +161,54 @@ const CommissionsList: React.FC = () => {
         return null;
     }
   };
-  
+
   const onSubmit = (data: CommissionFormValues) => {
-    if (editingCommission) {
-      // Update existing commission
-      const updatedCommissions = commissions.map(commission => 
-        commission.id === editingCommission.id 
-          ? { ...commission, ...data } 
-          : commission
-      );
+    try {
+      if (editingCommission) {
+        const updatedCommissions = commissions.map(commission => 
+          commission.id === editingCommission.id 
+            ? { ...commission, ...data } 
+            : commission
+        );
+        
+        setCommissions(updatedCommissions);
+        toast({
+          title: "Comissão atualizada",
+          description: "A comissão foi atualizada com sucesso."
+        });
+      } else {
+        const today = new Date();
+        const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+        
+        const newCommission: CommissionType = {
+          id: (commissions.length + 1).toString(),
+          ...data,
+          date: formattedDate
+        };
+        
+        setCommissions([newCommission, ...commissions]);
+        toast({
+          title: "Comissão adicionada",
+          description: "A comissão foi adicionada com sucesso."
+        });
+      }
       
-      setCommissions(updatedCommissions);
+      setOpen(false);
+    } catch (error) {
+      console.error("Error submitting commission:", error);
       toast({
-        title: "Comissão atualizada",
-        description: "A comissão foi atualizada com sucesso."
-      });
-    } else {
-      // Add new commission
-      const today = new Date();
-      const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-      
-      const newCommission: CommissionType = {
-        id: (commissions.length + 1).toString(),
-        ...data,
-        date: formattedDate
-      };
-      
-      setCommissions([newCommission, ...commissions]);
-      toast({
-        title: "Comissão adicionada",
-        description: "A comissão foi adicionada com sucesso."
+        title: "Erro",
+        description: "Ocorreu um erro ao salvar a comissão.",
+        variant: "destructive"
       });
     }
-    
-    setOpen(false);
   };
 
   const handleEditCommission = (commission: CommissionType) => {
     setEditingCommission(commission);
-    setOpen(true);
+    setTimeout(() => {
+      setOpen(true);
+    }, 0);
   };
 
   const handleViewCommission = (commission: CommissionType) => {
@@ -249,11 +253,16 @@ const CommissionsList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Comissões</h1>
-        <Dialog open={open} onOpenChange={(newOpen) => {
-          setOpen(newOpen);
-          // If dialog is closing, don't immediately reset the form
-          // The cleanup effect will handle this after a delay
-        }}>
+        <Dialog 
+          open={open} 
+          onOpenChange={(newOpen) => {
+            if (newOpen === false) {
+              setOpen(false);
+            } else {
+              setOpen(true);
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="gap-1">
               <Plus className="h-4 w-4" />
@@ -361,7 +370,6 @@ const CommissionsList: React.FC = () => {
         </Dialog>
       </div>
 
-      {/* View Commission Dialog */}
       <Dialog 
         open={!!viewingCommission} 
         onOpenChange={(open) => {
@@ -419,8 +427,10 @@ const CommissionsList: React.FC = () => {
                 </Button>
                 <Button 
                   onClick={() => {
-                    handleEditCommission(viewingCommission);
                     setViewingCommission(null);
+                    setTimeout(() => {
+                      handleEditCommission(viewingCommission);
+                    }, 100);
                   }}
                 >
                   Editar
@@ -431,7 +441,6 @@ const CommissionsList: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
