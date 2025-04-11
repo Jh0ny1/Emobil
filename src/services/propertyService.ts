@@ -43,7 +43,7 @@ export const addProperty = async (property: CreatePropertyType) => {
 export const updateProperty = async (id: string, updates: Partial<PropertyType>) => {
   const { data, error } = await supabase
     .from('properties')
-    .update({ ...updates, updated_at: new Date() })
+    .update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id)
     .select()
     .single();

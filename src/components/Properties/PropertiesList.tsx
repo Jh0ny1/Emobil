@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import PropertyCard, { PropertyType } from './PropertyCard';
@@ -12,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { fetchProperties, addProperty, uploadPropertyImage } from '@/services/propertyService';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface PropertyFormValues {
   title: string;
@@ -167,249 +169,253 @@ const PropertiesList: React.FC = () => {
             <DialogHeader>
               <DialogTitle>Adicionar Novo Imóvel</DialogTitle>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Título</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Título do imóvel" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Endereço</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Endereço" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cidade</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Cidade" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Preço</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          placeholder="Preço" 
-                          {...field} 
-                          onChange={e => field.onChange(Number(e.target.value))} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+            <ScrollArea className="max-h-[70vh]">
+              <div className="p-1">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Título</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
+                            <Input placeholder="Título do imóvel" {...field} />
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="apartment">Apartamento</SelectItem>
-                            <SelectItem value="house">Casa</SelectItem>
-                            <SelectItem value="condo">Condomínio</SelectItem>
-                            <SelectItem value="land">Terreno</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Endereço</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
+                            <Input placeholder="Endereço" {...field} />
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="available">Disponível</SelectItem>
-                            <SelectItem value="sold">Vendido</SelectItem>
-                            <SelectItem value="pending">Pendente</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="bedrooms"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Quartos</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min={0}
-                            {...field} 
-                            onChange={e => field.onChange(Number(e.target.value))} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="bathrooms"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banheiros</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min={0}
-                            step={0.5}
-                            {...field} 
-                            onChange={e => field.onChange(Number(e.target.value))} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="area"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Área (m²)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min={0}
-                            {...field} 
-                            onChange={e => field.onChange(Number(e.target.value))} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem className="space-y-4">
-                      <FormLabel>Imagem do Imóvel</FormLabel>
-                      <FormControl>
-                        <div className="grid gap-4">
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleImageUpload}
-                            id="property-image"
-                          />
-                          {!previewImage ? (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="h-40 flex flex-col items-center justify-center gap-2 border-dashed"
-                              onClick={() => fileInputRef.current?.click()}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cidade</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Cidade" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Preço</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              placeholder="Preço" 
+                              {...field} 
+                              onChange={e => field.onChange(Number(e.target.value))} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tipo</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
                             >
-                              <Image className="h-10 w-10 text-muted-foreground" />
-                              <span>Clique para adicionar imagem</span>
-                            </Button>
-                          ) : (
-                            <div className="relative h-40">
-                              <img
-                                src={previewImage}
-                                alt="Preview"
-                                className="h-full w-full object-cover rounded-md"
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="apartment">Apartamento</SelectItem>
+                                <SelectItem value="house">Casa</SelectItem>
+                                <SelectItem value="condo">Condomínio</SelectItem>
+                                <SelectItem value="land">Terreno</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Status</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="available">Disponível</SelectItem>
+                                <SelectItem value="sold">Vendido</SelectItem>
+                                <SelectItem value="pending">Pendente</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="bedrooms"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Quartos</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min={0}
+                                {...field} 
+                                onChange={e => field.onChange(Number(e.target.value))} 
                               />
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="icon"
-                                className="absolute top-2 right-2"
-                                onClick={clearImageUpload}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="bathrooms"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Banheiros</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min={0}
+                                step={0.5}
+                                {...field} 
+                                onChange={e => field.onChange(Number(e.target.value))} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="area"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Área (m²)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min={0}
+                                {...field} 
+                                onChange={e => field.onChange(Number(e.target.value))} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <FormField
+                      control={form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <FormLabel>Imagem do Imóvel</FormLabel>
+                          <FormControl>
+                            <div className="grid gap-4">
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                onChange={handleImageUpload}
+                                id="property-image"
+                              />
+                              {!previewImage ? (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="h-40 flex flex-col items-center justify-center gap-2 border-dashed"
+                                  onClick={() => fileInputRef.current?.click()}
+                                >
+                                  <Image className="h-10 w-10 text-muted-foreground" />
+                                  <span>Clique para adicionar imagem</span>
+                                </Button>
+                              ) : (
+                                <div className="relative h-40">
+                                  <img
+                                    src={previewImage}
+                                    alt="Preview"
+                                    className="h-full w-full object-cover rounded-md"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    className="absolute top-2 right-2"
+                                    onClick={clearImageUpload}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              )}
+                              <input
+                                type="hidden"
+                                {...field}
+                              />
                             </div>
-                          )}
-                          <input
-                            type="hidden"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <DialogFooter className="pt-4">
-                  <Button 
-                    type="submit" 
-                    disabled={addPropertyMutation.isPending}
-                  >
-                    {addPropertyMutation.isPending ? 'Adicionando...' : 'Adicionar'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <DialogFooter className="pt-4">
+                      <Button 
+                        type="submit" 
+                        disabled={addPropertyMutation.isPending}
+                      >
+                        {addPropertyMutation.isPending ? 'Adicionando...' : 'Adicionar'}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </div>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       </div>

@@ -1,11 +1,16 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import StatCard from './StatCard';
 import ChartCard from './ChartCard';
 import QuickActionCard from './QuickActionCard';
 import { Home, Calendar, FileText, DollarSign, Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   // Dados de exemplo para os cartões KPI
   const kpiData = [
     { 
@@ -75,28 +80,28 @@ const Dashboard: React.FC = () => {
     { name: 'Davi', value: 72000 }
   ];
 
-  // Ações rápidas de exemplo
+  // Ações rápidas com funcionalidades reais
   const quickActions = [
     { 
       label: 'Adicionar Imóvel', 
       icon: Plus, 
-      onClick: () => console.log('Adicionar imóvel clicado') 
+      onClick: () => navigate('/properties')
     },
     { 
       label: "Ver Visitas de Hoje", 
       icon: Calendar, 
-      onClick: () => console.log("Ver visitas de hoje clicado") 
+      onClick: () => navigate('/visits')
     },
     { 
       label: 'Registrar Novo Contrato', 
       icon: FileText, 
-      onClick: () => console.log('Registrar contrato clicado') 
+      onClick: () => navigate('/contracts')
     }
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Painel</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {kpiData.map((kpi, index) => (
