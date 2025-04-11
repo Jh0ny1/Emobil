@@ -17,67 +17,67 @@ import { format } from 'date-fns';
 const mockVisits: VisitType[] = [
   {
     id: '1',
-    date: 'April 7, 2025',
-    time: '10:00 AM',
+    date: '7 de Abril, 2025',
+    time: '10:00',
     clientName: 'John Smith',
     clientId: '1',
     agentName: 'Sarah Johnson',
     agentId: '1',
-    propertyTitle: 'Modern Apartment in Downtown',
+    propertyTitle: 'Apartamento Moderno no Centro',
     propertyId: '1',
-    propertyAddress: '123 Main Street, New York',
+    propertyAddress: 'Rua Principal, 123, São Paulo',
     status: 'scheduled'
   },
   {
     id: '2',
-    date: 'April 8, 2025',
-    time: '2:30 PM',
+    date: '8 de Abril, 2025',
+    time: '14:30',
     clientName: 'Emily Johnson',
     clientId: '2',
     agentName: 'Michael Brown',
     agentId: '2',
-    propertyTitle: 'Spacious Family House with Garden',
+    propertyTitle: 'Casa Familiar Espaçosa com Jardim',
     propertyId: '2',
-    propertyAddress: '456 Oak Avenue, Los Angeles',
+    propertyAddress: 'Avenida Carvalho, 456, Rio de Janeiro',
     status: 'scheduled'
   },
   {
     id: '3',
-    date: 'April 6, 2025',
-    time: '11:15 AM',
+    date: '6 de Abril, 2025',
+    time: '11:15',
     clientName: 'Michael Brown',
     clientId: '3',
     agentName: 'Jessica Davis',
     agentId: '3',
-    propertyTitle: 'Luxury Condo with Ocean View',
+    propertyTitle: 'Condomínio de Luxo com Vista para o Mar',
     propertyId: '3',
-    propertyAddress: '789 Beach Road, Miami',
+    propertyAddress: 'Rua da Praia, 789, Salvador',
     status: 'completed'
   },
   {
     id: '4',
-    date: 'April 9, 2025',
-    time: '4:00 PM',
+    date: '9 de Abril, 2025',
+    time: '16:00',
     clientName: 'Jessica Davis',
     clientId: '4',
     agentName: 'David Wilson',
     agentId: '4',
-    propertyTitle: 'Cozy Studio in Historic District',
+    propertyTitle: 'Estúdio Aconchegante em Bairro Histórico',
     propertyId: '4',
-    propertyAddress: '101 Vine Street, San Francisco',
+    propertyAddress: 'Rua das Flores, 101, Belo Horizonte',
     status: 'scheduled'
   },
   {
     id: '5',
-    date: 'April 5, 2025',
-    time: '1:45 PM',
+    date: '5 de Abril, 2025',
+    time: '13:45',
     clientName: 'David Wilson',
     clientId: '5',
     agentName: 'Sarah Martinez',
     agentId: '5',
-    propertyTitle: 'Renovated Brownstone Townhouse',
+    propertyTitle: 'Casa Geminada Renovada',
     propertyId: '5',
-    propertyAddress: '202 Park Avenue, Chicago',
+    propertyAddress: 'Avenida do Parque, 202, Curitiba',
     status: 'canceled'
   }
 ];
@@ -154,10 +154,10 @@ const VisitsList: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Visits</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Visitas</h1>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Schedule Visit
+          Agendar Visita
         </Button>
       </div>
       
@@ -165,7 +165,7 @@ const VisitsList: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search visits..."
+            placeholder="Buscar visitas..."
             value={filters.search || ''}
             onChange={handleSearchChange}
             className="pl-10"
@@ -179,7 +179,7 @@ const VisitsList: React.FC = () => {
             onClick={() => setIsFiltersVisible(!isFiltersVisible)}
           >
             <Filter className="h-4 w-4" />
-            Filters
+            Filtros
           </Button>
           
           {Object.keys(filters).length > 0 && (
@@ -189,7 +189,7 @@ const VisitsList: React.FC = () => {
               onClick={resetFilters}
             >
               <X className="h-4 w-4" />
-              Clear
+              Limpar
             </Button>
           )}
         </div>
@@ -205,10 +205,10 @@ const VisitsList: React.FC = () => {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="canceled">Canceled</SelectItem>
+              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value="scheduled">Agendada</SelectItem>
+              <SelectItem value="completed">Concluída</SelectItem>
+              <SelectItem value="canceled">Cancelada</SelectItem>
             </SelectContent>
           </Select>
           
@@ -236,8 +236,8 @@ const VisitsList: React.FC = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium">No visits found</h3>
-          <p className="text-muted-foreground mt-1">Try adjusting your filters or search criteria</p>
+          <h3 className="text-lg font-medium">Nenhuma visita encontrada</h3>
+          <p className="text-muted-foreground mt-1">Tente ajustar seus filtros ou critérios de busca</p>
         </div>
       )}
     </div>

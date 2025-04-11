@@ -95,17 +95,17 @@ const ClientsList: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Add Client
+          Adicionar Cliente
         </Button>
       </div>
       
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search clients by name, email, phone or city..."
+          placeholder="Buscar clientes por nome, email, telefone ou cidade..."
           value={searchQuery}
           onChange={handleSearch}
           className="pl-10"
@@ -120,8 +120,8 @@ const ClientsList: React.FC = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium">No clients found</h3>
-          <p className="text-muted-foreground mt-1">Try adjusting your search criteria</p>
+          <h3 className="text-lg font-medium">Nenhum cliente encontrado</h3>
+          <p className="text-muted-foreground mt-1">Tente ajustar seus critérios de busca</p>
         </div>
       )}
     </div>

@@ -45,6 +45,19 @@ const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return 'Agendada';
+      case 'completed':
+        return 'Concluída';
+      case 'canceled':
+        return 'Cancelada';
+      default:
+        return status;
+    }
+  };
+
   return (
     <Card className="overflow-hidden h-full">
       <CardContent className="p-4">
@@ -52,7 +65,7 @@ const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
           <div>
             <div className="flex flex-wrap gap-2 mb-1">
               <Badge className={cn(getStatusClass(visit.status))}>
-                {visit.status.charAt(0).toUpperCase() + visit.status.slice(1)}
+                {getStatusLabel(visit.status)}
               </Badge>
             </div>
             <h3 className="font-semibold">{visit.propertyTitle}</h3>
@@ -63,26 +76,26 @@ const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">Ações</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {visit.status !== 'completed' && (
                 <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'completed')}>
                   <Check className="h-4 w-4 mr-2" />
-                  Mark as Completed
+                  Marcar como Concluída
                 </DropdownMenuItem>
               )}
               {visit.status !== 'canceled' && (
                 <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'canceled')}>
                   <X className="h-4 w-4 mr-2" />
-                  Cancel Visit
+                  Cancelar Visita
                 </DropdownMenuItem>
               )}
               {visit.status !== 'scheduled' && (
                 <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'scheduled')}>
                   <CalendarIcon className="h-4 w-4 mr-2" />
-                  Reschedule
+                  Reagendar
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

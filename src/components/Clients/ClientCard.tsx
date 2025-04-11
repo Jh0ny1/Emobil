@@ -63,12 +63,12 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div className="bg-muted/50 p-3 rounded-md text-center">
             <span className="block text-lg font-medium">{client.viewedProperties}</span>
-            <span className="text-xs text-muted-foreground">Viewed Properties</span>
+            <span className="text-xs text-muted-foreground">Imóveis Vistos</span>
           </div>
           
           <div className="bg-muted/50 p-3 rounded-md text-center">
             <span className="block text-lg font-medium">{client.scheduledVisits}</span>
-            <span className="text-xs text-muted-foreground">Scheduled Visits</span>
+            <span className="text-xs text-muted-foreground">Visitas Agendadas</span>
           </div>
         </div>
       </CardContent>
@@ -77,7 +77,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <Button asChild className="w-full gap-2">
           <Link to={`/clients/${client.id}`}>
             <Eye className="h-4 w-4" />
-            View Details
+            Ver Detalhes
           </Link>
         </Button>
       </CardFooter>

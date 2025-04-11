@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const navigationItems = [
-    { name: 'Painel', icon: LayoutDashboard, path: '/dashboard' },
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Imóveis', icon: Home, path: '/properties' },
     { name: 'Clientes', icon: Users, path: '/clients' },
     { name: 'Visitas', icon: Calendar, path: '/visits' },
