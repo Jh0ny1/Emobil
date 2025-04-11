@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import VisitCard, { VisitType } from './VisitCard';
+import ScheduleVisitForm from './ScheduleVisitForm';
+import AddClientForm from '../Clients/AddClientForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Search, Calendar, Filter, X } from 'lucide-react';
+import { Search, Calendar, Filter, X } from 'lucide-react';
 import { format } from 'date-fns';
 
 // Mock visits data
@@ -155,10 +157,10 @@ const VisitsList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold tracking-tight">Visitas</h1>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Agendar Visita
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <ScheduleVisitForm />
+          <AddClientForm />
+        </div>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4">
