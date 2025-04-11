@@ -19,14 +19,14 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon: Icon, trend, className }) => {
   return (
     <Card className={cn("overflow-hidden", className)}>
-      <CardContent className="p-6">
+      <CardContent className="p-5">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <h3 className="text-2xl font-bold mt-1">{value}</h3>
+            <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+            <h3 className="text-2xl font-bold">{value}</h3>
             
             {change && (
-              <div className="flex items-center mt-1 text-sm">
+              <div className="flex items-center mt-2 text-sm">
                 <span 
                   className={cn(
                     "inline-flex items-center",
@@ -48,7 +48,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon: Icon, t
             )}
           </div>
           
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center text-primary">
             <Icon className="h-5 w-5" />
           </div>
         </div>
