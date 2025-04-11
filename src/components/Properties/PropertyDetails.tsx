@@ -1,57 +1,41 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Bed, Bath, Maximize, Phone, Mail, Calendar, FileText, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { PropertyType } from './PropertyCard';
-
-// Dados de exemplo para propriedades
-const propertiesData: PropertyType[] = [
-  {
-    id: "1",
-    title: "Casa Moderna em Condomínio",
-    address: "Rua das Flores, 123",
-    city: "São Paulo",
-    price: 750000,
-    type: "house",
-    status: "available",
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 180,
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: "2",
-    title: "Apartamento Luxuoso",
-    address: "Av. Paulista, 1000",
-    city: "São Paulo",
-    price: 1200000,
-    type: "apartment",
-    status: "available",
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 220,
-    image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: "3",
-    title: "Lote em Condomínio Fechado",
-    address: "Estrada do Sol, 456",
-    city: "Rio de Janeiro",
-    price: 350000,
-    type: "land",
-    status: "available",
-    area: 500,
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000"
-  }
-];
+import { useQuery } from '@tanstack/react-query';
+import { fetchPropertyById } from '@/services/propertyService';
+import { useToast } from '@/hooks/use-toast';
 
 const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const property = propertiesData.find(p => p.id === id);
+  const { toast } = useToast();
+  
+  const { data: property, isLoading, error } = useQuery({
+    queryKey: ['property', id],
+    queryFn: () => id ? fetchPropertyById(id) : Promise.reject('ID não informado'),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Erro ao carregar imóvel',
+        description: 'Não foi possível carregar os detalhes do imóvel.',
+        variant: 'destructive',
+      });
+    }
+  }, [error, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <h2 className="text-2xl font-bold mb-4">Carregando...</h2>
+      </div>
+    );
+  }
 
   if (!property) {
     return (

@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
@@ -45,8 +45,8 @@ const Navbar: React.FC = () => {
           
           <div className="flex items-center gap-2">
             <div className="hidden md:block text-right">
-              <p className="text-sm font-medium">{user?.name || 'Usuário'}</p>
-              <p className="text-xs text-muted-foreground">{user?.role === 'admin' ? 'Administrador' : 'Corretor de Imóveis'}</p>
+              <p className="text-sm font-medium">{profile?.name || user?.email || 'Usuário'}</p>
+              <p className="text-xs text-muted-foreground">{profile?.role === 'admin' ? 'Administrador' : 'Corretor de Imóveis'}</p>
             </div>
             <UserCircle className="h-8 w-8 text-muted-foreground" />
           </div>

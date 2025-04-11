@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import PropertyCard, { PropertyType } from './PropertyCard';
 import PropertyFilters from './PropertyFilters';
 import { Button } from '@/components/ui/button';
@@ -9,86 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
-
-// Mock property data
-const mockProperties: PropertyType[] = [
-  {
-    id: '1',
-    title: 'Apartamento Moderno no Centro',
-    address: 'Rua Principal, 123',
-    city: 'São Paulo',
-    price: 750000,
-    type: 'apartment',
-    status: 'available',
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 95,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1170&auto=format&fit=crop'
-  },
-  {
-    id: '2',
-    title: 'Casa Espaçosa com Jardim',
-    address: 'Avenida dos Carvalhos, 456',
-    city: 'Rio de Janeiro',
-    price: 1250000,
-    type: 'house',
-    status: 'available',
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 210,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1170&auto=format&fit=crop'
-  },
-  {
-    id: '3',
-    title: 'Condomínio de Luxo com Vista para o Mar',
-    address: 'Rua da Praia, 789',
-    city: 'Florianópolis',
-    price: 980000,
-    type: 'condo',
-    status: 'sold',
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 150,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop'
-  },
-  {
-    id: '4',
-    title: 'Estúdio Aconchegante no Centro Histórico',
-    address: 'Rua da Videira, 101',
-    city: 'Salvador',
-    price: 550000,
-    type: 'apartment',
-    status: 'pending',
-    bedrooms: 1,
-    bathrooms: 1,
-    area: 65,
-    image: 'https://images.unsplash.com/photo-1567496898669-ee935f5f647a?q=80&w=1171&auto=format&fit=crop'
-  },
-  {
-    id: '5',
-    title: 'Sobrado Renovado no Bairro Nobre',
-    address: 'Avenida do Parque, 202',
-    city: 'Curitiba',
-    price: 895000,
-    type: 'house',
-    status: 'available',
-    bedrooms: 3,
-    bathrooms: 2.5,
-    area: 180,
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1170&auto=format&fit=crop'
-  },
-  {
-    id: '6',
-    title: 'Terreno com Vista para a Montanha',
-    address: 'Estrada das Serras, 303',
-    city: 'Belo Horizonte',
-    price: 350000,
-    type: 'land',
-    status: 'available',
-    area: 1200,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1132&auto=format&fit=crop'
-  }
-];
+import { useAuth } from '@/context/AuthContext';
+import { fetchProperties, addProperty, uploadPropertyImage } from '@/services/propertyService';
 
 interface PropertyFormValues {
   title: string;
@@ -104,11 +27,53 @@ interface PropertyFormValues {
 }
 
 const PropertiesList: React.FC = () => {
-  const [properties, setProperties] = useState<PropertyType[]>(mockProperties);
   const [open, setOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  
+  const { data: properties = [], isLoading } = useQuery({
+    queryKey: ['properties'],
+    queryFn: fetchProperties,
+  });
+  
+  const addPropertyMutation = useMutation({
+    mutationFn: async (data: PropertyFormValues) => {
+      if (!user) throw new Error('Usuário não autenticado');
+      
+      let imageUrl = '';
+      
+      if (imageFile) {
+        imageUrl = await uploadPropertyImage(imageFile);
+      }
+      
+      return addProperty({
+        ...data,
+        image: imageUrl || data.image,
+        user_id: user.id,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      setOpen(false);
+      resetForm();
+      
+      toast({
+        title: "Imóvel adicionado",
+        description: "O imóvel foi adicionado com sucesso."
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao adicionar imóvel",
+        description: error.message || "Ocorreu um erro ao adicionar o imóvel.",
+        variant: "destructive"
+      });
+    }
+  });
   
   const form = useForm<PropertyFormValues>({
     defaultValues: {
@@ -126,48 +91,6 @@ const PropertiesList: React.FC = () => {
   });
   
   const handleFilterChange = (filters: any) => {
-    let filteredProperties = [...mockProperties];
-    
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filteredProperties = filteredProperties.filter(property => 
-        property.title.toLowerCase().includes(searchLower) ||
-        property.address.toLowerCase().includes(searchLower) ||
-        property.city.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    if (filters.status) {
-      filteredProperties = filteredProperties.filter(property => 
-        property.status === filters.status
-      );
-    }
-    
-    if (filters.type) {
-      filteredProperties = filteredProperties.filter(property => 
-        property.type === filters.type
-      );
-    }
-    
-    if (filters.city) {
-      filteredProperties = filteredProperties.filter(property => 
-        property.city === filters.city
-      );
-    }
-    
-    if (filters.minPrice) {
-      filteredProperties = filteredProperties.filter(property => 
-        property.price >= parseInt(filters.minPrice)
-      );
-    }
-    
-    if (filters.maxPrice) {
-      filteredProperties = filteredProperties.filter(property => 
-        property.price <= parseInt(filters.maxPrice)
-      );
-    }
-    
-    setProperties(filteredProperties);
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,12 +107,14 @@ const PropertiesList: React.FC = () => {
 
       const imageUrl = URL.createObjectURL(file);
       setPreviewImage(imageUrl);
+      setImageFile(file);
       form.setValue('image', imageUrl);
     }
   };
 
   const clearImageUpload = () => {
     setPreviewImage(null);
+    setImageFile(null);
     form.setValue('image', '');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -197,7 +122,16 @@ const PropertiesList: React.FC = () => {
   };
 
   const onSubmit = (data: PropertyFormValues) => {
-    if (!data.image) {
+    if (!user) {
+      toast({
+        title: "Erro ao adicionar imóvel",
+        description: "Você precisa estar logado para adicionar um imóvel.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!data.image && !imageFile) {
       toast({
         title: "Erro ao adicionar imóvel",
         description: "Por favor, adicione uma imagem do imóvel.",
@@ -206,25 +140,13 @@ const PropertiesList: React.FC = () => {
       return;
     }
 
-    const newProperty: PropertyType = {
-      id: (properties.length + 1).toString(),
-      ...data
-    };
-    
-    setProperties([newProperty, ...properties]);
-    setOpen(false);
-    form.reset();
-    setPreviewImage(null);
-    
-    toast({
-      title: "Imóvel adicionado",
-      description: "O imóvel foi adicionado com sucesso."
-    });
+    addPropertyMutation.mutate(data);
   };
 
   const resetForm = () => {
     form.reset();
     setPreviewImage(null);
+    setImageFile(null);
   };
 
   return (
@@ -479,7 +401,12 @@ const PropertiesList: React.FC = () => {
                 />
                 
                 <DialogFooter className="pt-4">
-                  <Button type="submit">Adicionar</Button>
+                  <Button 
+                    type="submit" 
+                    disabled={addPropertyMutation.isPending}
+                  >
+                    {addPropertyMutation.isPending ? 'Adicionando...' : 'Adicionar'}
+                  </Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -489,7 +416,11 @@ const PropertiesList: React.FC = () => {
       
       <PropertyFilters onFilterChange={handleFilterChange} />
       
-      {properties.length > 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium">Carregando imóveis...</h3>
+        </div>
+      ) : properties.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} />
