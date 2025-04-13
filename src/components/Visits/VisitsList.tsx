@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import VisitCard, { VisitType } from './VisitCard';
 import ScheduleVisitForm from './ScheduleVisitForm';
@@ -223,7 +222,7 @@ const VisitsList: React.FC = () => {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value="all">Todos os Status</SelectItem>
               <SelectItem value="scheduled">Agendada</SelectItem>
               <SelectItem value="completed">Concluída</SelectItem>
               <SelectItem value="canceled">Cancelada</SelectItem>
