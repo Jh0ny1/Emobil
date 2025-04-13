@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { ClientType } from './ClientCard';
 
 const formSchema = z.object({
   name: z.string().min(3, { message: 'O nome deve ter no mínimo 3 caracteres' }),
@@ -31,11 +32,16 @@ const formSchema = z.object({
   phone: z.string().min(10, { message: 'Telefone inválido' }),
   document: z.string().min(11, { message: 'CPF inválido' }).optional(),
   address: z.string().min(5, { message: 'Endereço deve ter no mínimo 5 caracteres' }).optional(),
+  city: z.string().min(2, { message: 'Cidade deve ter no mínimo 2 caracteres' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function AddClientForm() {
+interface AddClientFormProps {
+  onAddClient: (client: Omit<ClientType, 'id' | 'viewedProperties' | 'scheduledVisits'>) => ClientType;
+}
+
+export default function AddClientForm({ onAddClient }: AddClientFormProps) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
 
@@ -47,19 +53,27 @@ export default function AddClientForm() {
       phone: '',
       document: '',
       address: '',
+      city: '',
     },
   });
 
   function onSubmit(data: FormValues) {
-    // Aqui seria a integração com o backend para salvar o cliente
-    console.log('Dados do cliente:', data);
+    // Add the client
+    const newClient = onAddClient({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      document: data.document,
+      address: data.address,
+      city: data.city,
+    });
     
     toast({
       title: 'Cliente adicionado com sucesso!',
-      description: `${data.name} foi adicionado à sua lista de clientes.`,
+      description: `${newClient.name} foi adicionado à sua lista de clientes.`,
     });
     
-    // Resetar o formulário e fechar o diálogo
+    // Reset the form and close the dialog
     form.reset();
     setOpen(false);
   }
@@ -125,6 +139,20 @@ export default function AddClientForm() {
                 )}
               />
             </div>
+            
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Cidade" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
             <FormField
               control={form.control}
