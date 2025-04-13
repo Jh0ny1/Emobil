@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Phone, Mail, Eye, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export interface ClientType {
@@ -72,15 +70,6 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           </div>
         </div>
       </CardContent>
-      
-      <CardFooter className="p-4">
-        <Button asChild className="w-full gap-2">
-          <Link to={`/clients/${client.id}`}>
-            <Eye className="h-4 w-4" />
-            Ver Detalhes
-          </Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

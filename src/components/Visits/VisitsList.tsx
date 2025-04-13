@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Search, Calendar, Filter, X } from 'lucide-react';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock visits data
 const mockVisits: VisitType[] = [
@@ -92,6 +93,7 @@ const VisitsList: React.FC = () => {
     date?: string;
   }>({});
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const { toast } = useToast();
 
   // Carregar as visitas do localStorage e combiná-las com as mockVisits
   useEffect(() => {
@@ -195,6 +197,31 @@ const VisitsList: React.FC = () => {
     }
   };
 
+  const handleDeleteVisit = (visitId: string) => {
+    // Remove visit from current state
+    const updatedVisits = visits.filter(visit => visit.id !== visitId);
+    setVisits(updatedVisits);
+    
+    // Remove visit from allVisits state
+    const updatedAllVisits = allVisits.filter(visit => visit.id !== visitId);
+    setAllVisits(updatedAllVisits);
+    
+    // Update localStorage
+    const storedVisits = localStorage.getItem('mockVisits');
+    if (storedVisits) {
+      const parsedVisits = JSON.parse(storedVisits);
+      const updatedStoredVisits = parsedVisits.filter((visit: VisitType) => visit.id !== visitId);
+      localStorage.setItem('mockVisits', JSON.stringify(updatedStoredVisits));
+    }
+    
+    // Show success toast
+    toast({
+      title: "Visita excluída",
+      description: "A visita foi excluída com sucesso.",
+      variant: "default",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -274,6 +301,7 @@ const VisitsList: React.FC = () => {
               key={visit.id} 
               visit={visit} 
               onStatusChange={handleStatusChange}
+              onDeleteVisit={handleDeleteVisit}
             />
           ))}
         </div>

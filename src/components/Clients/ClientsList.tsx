@@ -4,6 +4,7 @@ import ClientCard, { ClientType } from './ClientCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
+import AddClientForm from './AddClientForm';
 
 // Mock client data
 const mockClients: ClientType[] = [
@@ -96,10 +97,7 @@ const ClientsList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Adicionar Cliente
-        </Button>
+        <AddClientForm />
       </div>
       
       <div className="relative">

@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
-import { Calendar, Clock, MapPin, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,9 +33,10 @@ export type VisitType = {
 type VisitCardProps = {
   visit: VisitType;
   onStatusChange: (visitId: string, newStatus: 'scheduled' | 'completed' | 'canceled') => void;
+  onDeleteVisit: (visitId: string) => void;
 };
 
-const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
+const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange, onDeleteVisit }) => {
   const statusColors = {
     scheduled: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
     completed: 'bg-green-100 text-green-800 hover:bg-green-200',
@@ -88,6 +89,14 @@ const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
                 Cancelar visita
               </DropdownMenuItem>
             )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => onDeleteVisit(visit.id)}
+              className="text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Excluir visita
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
