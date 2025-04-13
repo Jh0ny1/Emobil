@@ -1,18 +1,21 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/icons';
+import { Calendar, Clock, MapPin, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Calendar, Clock, Home, User, MoreVertical, Check, X, Calendar as CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { MoreHorizontal } from 'lucide-react';
 
-export interface VisitType {
+export type VisitType = {
   id: string;
   date: string;
   time: string;
@@ -24,110 +27,110 @@ export interface VisitType {
   propertyId: string;
   propertyAddress: string;
   status: 'scheduled' | 'completed' | 'canceled';
-}
+  notes?: string;
+};
 
-interface VisitCardProps {
+type VisitCardProps = {
   visit: VisitType;
-  onStatusChange: (visitId: string, status: 'scheduled' | 'completed' | 'canceled') => void;
-}
+  onStatusChange: (visitId: string, newStatus: 'scheduled' | 'completed' | 'canceled') => void;
+};
 
 const VisitCard: React.FC<VisitCardProps> = ({ visit, onStatusChange }) => {
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100';
-      case 'completed':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
-      case 'canceled':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
-      default:
-        return '';
-    }
+  const statusColors = {
+    scheduled: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+    completed: 'bg-green-100 text-green-800 hover:bg-green-200',
+    canceled: 'bg-red-100 text-red-800 hover:bg-red-200',
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return 'Agendada';
-      case 'completed':
-        return 'Concluída';
-      case 'canceled':
-        return 'Cancelada';
-      default:
-        return status;
-    }
+  const statusLabels = {
+    scheduled: 'Agendada',
+    completed: 'Concluída',
+    canceled: 'Cancelada',
   };
 
   return (
-    <Card className="overflow-hidden h-full">
-      <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <div className="flex flex-wrap gap-2 mb-1">
-              <Badge className={cn(getStatusClass(visit.status))}>
-                {getStatusLabel(visit.status)}
-              </Badge>
-            </div>
-            <h3 className="font-semibold">{visit.propertyTitle}</h3>
-            <p className="text-sm text-muted-foreground">{visit.propertyAddress}</p>
-          </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Ações</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {visit.status !== 'completed' && (
-                <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'completed')}>
-                  <Check className="h-4 w-4 mr-2" />
-                  Marcar como Concluída
-                </DropdownMenuItem>
-              )}
-              {visit.status !== 'canceled' && (
-                <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'canceled')}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancelar Visita
-                </DropdownMenuItem>
-              )}
-              {visit.status !== 'scheduled' && (
-                <DropdownMenuItem onClick={() => onStatusChange(visit.id, 'scheduled')}>
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  Reagendar
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <Card className="overflow-hidden">
+      <CardHeader className="p-4 pb-0 flex flex-row justify-between items-start">
+        <div>
+          <Badge className={statusColors[visit.status]}>
+            {statusLabels[visit.status]}
+          </Badge>
+          <h3 className="font-semibold text-lg mt-2 line-clamp-1">{visit.propertyTitle}</h3>
         </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center text-sm">
-              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{visit.date}</span>
-            </div>
-            
-            <div className="flex items-center text-sm">
-              <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{visit.time}</span>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center text-sm">
-              <User className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{visit.clientName}</span>
-            </div>
-            
-            <div className="flex items-center text-sm">
-              <Home className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{visit.agentName}</span>
-            </div>
-          </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Mais opções</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {visit.status !== 'completed' && (
+              <DropdownMenuItem
+                onClick={() => onStatusChange(visit.id, 'completed')}
+              >
+                Marcar como concluída
+              </DropdownMenuItem>
+            )}
+            {visit.status !== 'scheduled' && (
+              <DropdownMenuItem
+                onClick={() => onStatusChange(visit.id, 'scheduled')}
+              >
+                Marcar como agendada
+              </DropdownMenuItem>
+            )}
+            {visit.status !== 'canceled' && (
+              <DropdownMenuItem
+                onClick={() => onStatusChange(visit.id, 'canceled')}
+              >
+                Cancelar visita
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardHeader>
+      <CardContent className="p-4 space-y-2">
+        <div className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+          <span className="text-sm text-muted-foreground">
+            {visit.propertyAddress}
+          </span>
         </div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">{visit.date}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">{visit.time}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <User className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">
+            Cliente: <span className="font-medium">{visit.clientName}</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <User className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">
+            Corretor: <span className="font-medium">{visit.agentName}</span>
+          </span>
+        </div>
+        {visit.notes && (
+          <div className="pt-2">
+            <h4 className="text-sm font-medium mb-1">Observações:</h4>
+            <p className="text-sm text-muted-foreground">{visit.notes}</p>
+          </div>
+        )}
       </CardContent>
+      <CardFooter className="p-4 pt-0">
+        <Button variant="outline" className="w-full gap-2" size="sm">
+          <Icons.property className="h-4 w-4" />
+          Ver detalhes do imóvel
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

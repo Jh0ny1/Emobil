@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -76,7 +76,7 @@ const mockProperties = [
 
 export default function ScheduleVisitForm() {
   const { toast } = useToast();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -89,6 +89,37 @@ export default function ScheduleVisitForm() {
     // Aqui seria a integração com o backend para salvar a visita agendada
     console.log('Dados do agendamento de visita:', data);
     
+    // Criar um objeto de visita com base nos valores do formulário
+    const selectedClient = mockClients.find(client => client.id === data.clientId);
+    const selectedAgent = mockAgents.find(agent => agent.id === data.agentId);
+    const selectedProperty = mockProperties.find(property => property.id === data.propertyId);
+    
+    if (selectedClient && selectedAgent && selectedProperty) {
+      const formattedDate = format(data.date, "d 'de' MMMM, yyyy");
+      
+      const newVisit = {
+        id: String(Date.now()), // ID temporário baseado no timestamp
+        date: formattedDate,
+        time: data.time,
+        clientName: selectedClient.name,
+        clientId: selectedClient.id,
+        agentName: selectedAgent.name,
+        agentId: selectedAgent.id,
+        propertyTitle: selectedProperty.title,
+        propertyId: selectedProperty.id,
+        propertyAddress: selectedProperty.address,
+        status: 'scheduled',
+        notes: data.notes
+      };
+      
+      // Em uma aplicação real, enviaria para o backend
+      // Por enquanto, vamos adicionar ao array mockVisits no localStorage
+      const storedVisits = localStorage.getItem('mockVisits');
+      const mockVisits = storedVisits ? JSON.parse(storedVisits) : [];
+      mockVisits.push(newVisit);
+      localStorage.setItem('mockVisits', JSON.stringify(mockVisits));
+    }
+    
     toast({
       title: 'Visita agendada com sucesso!',
       description: `Visita agendada para ${format(data.date, 'dd/MM/yyyy')} às ${data.time}`,
@@ -97,6 +128,9 @@ export default function ScheduleVisitForm() {
     // Resetar o formulário e fechar o diálogo
     form.reset();
     setOpen(false);
+    
+    // Recarregar a página para exibir a nova visita
+    window.location.reload();
   }
 
   return (
@@ -227,6 +261,7 @@ export default function ScheduleVisitForm() {
                             date < new Date(new Date().setHours(0, 0, 0, 0))
                           }
                           initialFocus
+                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>

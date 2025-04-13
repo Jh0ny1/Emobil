@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import VisitCard, { VisitType } from './VisitCard';
 import ScheduleVisitForm from './ScheduleVisitForm';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,8 @@ const mockVisits: VisitType[] = [
 ];
 
 const VisitsList: React.FC = () => {
-  const [visits, setVisits] = useState<VisitType[]>(mockVisits);
+  const [allVisits, setAllVisits] = useState<VisitType[]>([]);
+  const [visits, setVisits] = useState<VisitType[]>([]);
   const [filters, setFilters] = useState<{
     search?: string;
     status?: string;
@@ -91,7 +93,22 @@ const VisitsList: React.FC = () => {
   }>({});
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  // Carregar as visitas do localStorage e combiná-las com as mockVisits
+  useEffect(() => {
+    const storedVisits = localStorage.getItem('mockVisits');
+    let combinedVisits = [...mockVisits];
+    
+    if (storedVisits) {
+      const parsedVisits = JSON.parse(storedVisits);
+      // Combinar as visitas armazenadas com as mockVisits, evitando duplicatas por ID
+      const existingIds = new Set(mockVisits.map(visit => visit.id));
+      const newVisits = parsedVisits.filter((visit: VisitType) => !existingIds.has(visit.id));
+      combinedVisits = [...mockVisits, ...newVisits];
+    }
+    
+    setAllVisits(combinedVisits);
+    setVisits(combinedVisits);
+  }, []);
 
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...filters, [key]: value };
@@ -110,7 +127,7 @@ const VisitsList: React.FC = () => {
   };
 
   const applyFilters = (currentFilters: any) => {
-    let filteredVisits = [...mockVisits];
+    let filteredVisits = [...allVisits];
     
     if (currentFilters.search) {
       const searchLower = currentFilters.search.toLowerCase();
@@ -122,7 +139,7 @@ const VisitsList: React.FC = () => {
       );
     }
     
-    if (currentFilters.status && currentFilters.status !== '') {
+    if (currentFilters.status && currentFilters.status !== 'all') {
       filteredVisits = filteredVisits.filter(visit => 
         visit.status === currentFilters.status
       );
@@ -142,7 +159,7 @@ const VisitsList: React.FC = () => {
         // Como estamos usando strings para datas no mock, vamos fazer uma comparação simplificada
         return visit.date.includes(filterDateStr) || 
                visit.date.includes(format(filterDate, 'dd/MM/yyyy')) ||
-               visit.date.includes(format(filterDate, "d 'de' MMMM, yyyy", { locale: require('date-fns/locale/pt-BR') }));
+               visit.date.includes(format(filterDate, "d 'de' MMMM, yyyy"));
       });
     }
     
@@ -151,21 +168,31 @@ const VisitsList: React.FC = () => {
 
   const resetFilters = () => {
     setFilters({});
-    setVisits(mockVisits);
+    setVisits(allVisits);
   };
 
   const handleStatusChange = (visitId: string, newStatus: 'scheduled' | 'completed' | 'canceled') => {
+    // Update visits in the current state
     const updatedVisits = visits.map(visit => 
       visit.id === visitId ? { ...visit, status: newStatus } : visit
     );
     setVisits(updatedVisits);
     
-    // Update the mock data as well to persist changes when filtering
-    mockVisits.forEach(visit => {
-      if (visit.id === visitId) {
-        visit.status = newStatus;
-      }
-    });
+    // Update allVisits state
+    const updatedAllVisits = allVisits.map(visit => 
+      visit.id === visitId ? { ...visit, status: newStatus } : visit
+    );
+    setAllVisits(updatedAllVisits);
+    
+    // Update localStorage if the visit is from there
+    const storedVisits = localStorage.getItem('mockVisits');
+    if (storedVisits) {
+      const parsedVisits = JSON.parse(storedVisits);
+      const updatedStoredVisits = parsedVisits.map((visit: VisitType) => 
+        visit.id === visitId ? { ...visit, status: newStatus } : visit
+      );
+      localStorage.setItem('mockVisits', JSON.stringify(updatedStoredVisits));
+    }
   };
 
   return (
@@ -174,7 +201,6 @@ const VisitsList: React.FC = () => {
         <h1 className="text-2xl font-bold tracking-tight">Visitas</h1>
         <div className="flex flex-wrap gap-2">
           <ScheduleVisitForm />
-          {/* Removed the AddClientForm component */}
         </div>
       </div>
       
