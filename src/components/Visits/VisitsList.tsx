@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import VisitCard, { VisitType } from './VisitCard';
 import ScheduleVisitForm from './ScheduleVisitForm';
-import AddClientForm from '../Clients/AddClientForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -97,6 +96,12 @@ const VisitsList: React.FC = () => {
 
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...filters, [key]: value };
+    
+    // Se o valor estiver vazio, remova a chave do objeto de filtros
+    if (value === '') {
+      delete newFilters[key as keyof typeof newFilters];
+    }
+    
     setFilters(newFilters);
     applyFilters(newFilters);
   };
@@ -118,17 +123,28 @@ const VisitsList: React.FC = () => {
       );
     }
     
-    if (currentFilters.status) {
+    if (currentFilters.status && currentFilters.status !== '') {
       filteredVisits = filteredVisits.filter(visit => 
         visit.status === currentFilters.status
       );
     }
     
-    if (currentFilters.date) {
-      // Simple date filtering - in a real app would need proper date comparison
-      filteredVisits = filteredVisits.filter(visit => 
-        visit.date.includes(currentFilters.date)
-      );
+    if (currentFilters.date && currentFilters.date !== '') {
+      // Convertendo a data do filtro para um formato mais fácil de comparar
+      const filterDate = new Date(currentFilters.date);
+      const filterDateStr = filterDate.toLocaleDateString('pt-BR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      
+      // Filtrando por data
+      filteredVisits = filteredVisits.filter(visit => {
+        // Como estamos usando strings para datas no mock, vamos fazer uma comparação simplificada
+        return visit.date.includes(filterDateStr) || 
+               visit.date.includes(format(filterDate, 'dd/MM/yyyy')) ||
+               visit.date.includes(format(filterDate, "d 'de' MMMM, yyyy", { locale: require('date-fns/locale/pt-BR') }));
+      });
     }
     
     setVisits(filteredVisits);
@@ -159,7 +175,7 @@ const VisitsList: React.FC = () => {
         <h1 className="text-2xl font-bold tracking-tight">Visitas</h1>
         <div className="flex flex-wrap gap-2">
           <ScheduleVisitForm />
-          <AddClientForm />
+          {/* Removed the AddClientForm component */}
         </div>
       </div>
       
@@ -181,7 +197,7 @@ const VisitsList: React.FC = () => {
             onClick={() => setIsFiltersVisible(!isFiltersVisible)}
           >
             <Filter className="h-4 w-4" />
-            Filtros
+            Filtros {isFiltersVisible ? 'ocultar' : 'mostrar'}
           </Button>
           
           {Object.keys(filters).length > 0 && (
@@ -198,7 +214,7 @@ const VisitsList: React.FC = () => {
       </div>
       
       {isFiltersVisible && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 bg-muted/20 p-4 rounded-md">
           <Select 
             value={filters.status || ''} 
             onValueChange={(value) => handleFilterChange('status', value)}
@@ -215,7 +231,7 @@ const VisitsList: React.FC = () => {
           </Select>
           
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
             <Input
               type="date"
               value={filters.date || ''}
