@@ -36,10 +36,10 @@ const Sidebar: React.FC = () => {
       <div className="h-14 min-h-[3.5rem] border-b flex items-center justify-between px-4">
         <div className={cn("flex items-center", collapsed && "justify-center w-full")}>
           {!collapsed && (
-            <span className="font-semibold text-lg text-real-600">PropVue</span>
+            <span className="font-semibold text-lg text-real-600">Emobil</span>
           )}
           {collapsed && (
-            <span className="font-bold text-real-600">PV</span>
+            <span className="font-bold text-real-600">EM</span>
           )}
         </div>
         <button
