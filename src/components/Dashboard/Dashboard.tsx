@@ -138,7 +138,6 @@ const Dashboard: React.FC = () => {
               data={propertiesStatusData}
               type="pie"
               colors={['#10b981', '#3b82f6', '#f59e0b']}
-              className="h-[300px]" // Aumentando altura para melhor visualização
             />
             
             <ChartCard
@@ -183,13 +182,12 @@ const Dashboard: React.FC = () => {
             type="area"
           />
           
-          {/* Ajustando o tamanho do gráfico de pizza para melhor visualização */}
+          {/* Removendo a propriedade className que estava causando erro */}
           <ChartCard
             title="Imóveis por Status"
             data={propertiesStatusData}
             type="pie"
             colors={['#10b981', '#3b82f6', '#f59e0b']}
-            className="min-h-[350px]" // Aumentando altura mínima
           />
           
           <ChartCard

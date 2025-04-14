@@ -42,18 +42,18 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onDelete }) => {
       .toUpperCase();
   };
 
-  // Separando a lógica de exclusão em uma função específica
-  const handleDelete = () => {
+  // Criamos uma função que vai servir de wrapper para a função de exclusão
+  const handleDeleteClient = () => {
     try {
-      // Chamar a função de exclusão passada como prop
+      // Chamamos a função de exclusão passada como prop
       onDelete(client.id);
-      // Exibir toast de sucesso apenas se a exclusão for bem-sucedida
+      
+      // Exibimos o toast de sucesso após a exclusão bem-sucedida
       toast({
         title: "Cliente removido",
         description: `${client.name} foi removido com sucesso.`,
       });
     } catch (error) {
-      // Tratar possíveis erros
       console.error("Erro ao excluir cliente:", error);
       toast({
         title: "Erro ao remover cliente",
@@ -89,20 +89,15 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onDelete }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {/* Usando componente de diálogo fora da DropdownMenuItem para evitar problemas de evento */}
               <DeleteClientDialog 
                 client={client} 
-                onDelete={handleDelete} 
+                onDelete={handleDeleteClient}
                 trigger={
-                  <DropdownMenuItem 
-                    className="text-destructive cursor-pointer" 
-                    onSelect={(e) => {
-                      // Prevenir o comportamento padrão que fecha o menu
-                      e.preventDefault();
-                    }}
-                  >
+                  <button className="w-full flex items-center px-2 py-1.5 text-sm text-destructive hover:bg-accent cursor-pointer">
                     <Trash className="h-4 w-4 mr-2" />
                     Excluir
-                  </DropdownMenuItem>
+                  </button>
                 }
               />
             </DropdownMenuContent>
