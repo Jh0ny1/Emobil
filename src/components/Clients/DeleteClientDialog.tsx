@@ -26,6 +26,15 @@ const DeleteClientDialog: React.FC<DeleteClientDialogProps> = ({
   onDelete,
   trigger
 }) => {
+  // Criando uma função explícita para lidar com a exclusão
+  const handleDeleteAction = (e: React.MouseEvent) => {
+    // Interromper a propagação do evento para evitar que afete outros elementos
+    e.preventDefault();
+    e.stopPropagation();
+    // Chamar a função onDelete fornecida pelo componente pai
+    onDelete();
+  };
+
   return (
     <AlertDialog>
       {trigger ? (
@@ -51,10 +60,7 @@ const DeleteClientDialog: React.FC<DeleteClientDialogProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction 
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }} 
+            onClick={handleDeleteAction}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             <Trash className="h-4 w-4 mr-2" />

@@ -42,12 +42,25 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onDelete }) => {
       .toUpperCase();
   };
 
+  // Separando a lógica de exclusão em uma função específica
   const handleDelete = () => {
-    onDelete(client.id);
-    toast({
-      title: "Cliente removido",
-      description: `${client.name} foi removido com sucesso.`,
-    });
+    try {
+      // Chamar a função de exclusão passada como prop
+      onDelete(client.id);
+      // Exibir toast de sucesso apenas se a exclusão for bem-sucedida
+      toast({
+        title: "Cliente removido",
+        description: `${client.name} foi removido com sucesso.`,
+      });
+    } catch (error) {
+      // Tratar possíveis erros
+      console.error("Erro ao excluir cliente:", error);
+      toast({
+        title: "Erro ao remover cliente",
+        description: "Ocorreu um erro ao tentar remover o cliente. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -80,7 +93,13 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onDelete }) => {
                 client={client} 
                 onDelete={handleDelete} 
                 trigger={
-                  <DropdownMenuItem className="text-destructive cursor-pointer">
+                  <DropdownMenuItem 
+                    className="text-destructive cursor-pointer" 
+                    onSelect={(e) => {
+                      // Prevenir o comportamento padrão que fecha o menu
+                      e.preventDefault();
+                    }}
+                  >
                     <Trash className="h-4 w-4 mr-2" />
                     Excluir
                   </DropdownMenuItem>
