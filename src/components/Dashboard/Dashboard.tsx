@@ -6,6 +6,7 @@ import ChartCard from './ChartCard';
 import QuickActionCard from './QuickActionCard';
 import { Home, Calendar, FileText, DollarSign, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -103,52 +104,109 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
 
-      {/* Modificação para melhorar o espaçamento dos cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
-        {kpiData.map((kpi, index) => (
-          <StatCard
-            key={index}
-            title={kpi.title}
-            value={kpi.value}
-            change={kpi.change}
-            trend={kpi.trend}
-            icon={kpi.icon}
-            className="h-full"
+      {/* Visualização para dispositivos mobile */}
+      <div className="block md:hidden">
+        <Tabs defaultValue="stats" className="w-full">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="stats">Estatísticas</TabsTrigger>
+            <TabsTrigger value="charts">Gráficos</TabsTrigger>
+            <TabsTrigger value="actions">Ações</TabsTrigger>
+          </TabsList>
+          <TabsContent value="stats" className="space-y-4 mt-4">
+            {kpiData.map((kpi, index) => (
+              <StatCard
+                key={index}
+                title={kpi.title}
+                value={kpi.value}
+                change={kpi.change}
+                trend={kpi.trend}
+                icon={kpi.icon}
+                className="h-full"
+              />
+            ))}
+          </TabsContent>
+          <TabsContent value="charts" className="space-y-4 mt-4">
+            <ChartCard
+              title="Vendas Mensais"
+              description="Número de imóveis vendidos por mês"
+              data={monthlySalesData}
+              type="area"
+            />
+            
+            <ChartCard
+              title="Imóveis por Status"
+              data={propertiesStatusData}
+              type="pie"
+              colors={['#10b981', '#3b82f6', '#f59e0b']}
+              className="h-[300px]" // Aumentando altura para melhor visualização
+            />
+            
+            <ChartCard
+              title="Comissões por Corretor"
+              description="Total de comissões ganhas pelos principais corretores"
+              data={commissionsByAgentData}
+              type="bar"
+            />
+          </TabsContent>
+          <TabsContent value="actions" className="mt-4">
+            <QuickActionCard
+              title="Ações Rápidas"
+              description="Tarefas comuns que você pode querer realizar"
+              actions={quickActions}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Visualização para tablets e desktops */}
+      <div className="hidden md:block">
+        {/* Modificação para melhorar o espaçamento dos cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+          {kpiData.map((kpi, index) => (
+            <StatCard
+              key={index}
+              title={kpi.title}
+              value={kpi.value}
+              change={kpi.change}
+              trend={kpi.trend}
+              icon={kpi.icon}
+              className="h-full"
+            />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <ChartCard
+            title="Vendas Mensais"
+            description="Número de imóveis vendidos por mês"
+            data={monthlySalesData}
+            type="area"
           />
-        ))}
-      </div>
+          
+          {/* Ajustando o tamanho do gráfico de pizza para melhor visualização */}
+          <ChartCard
+            title="Imóveis por Status"
+            data={propertiesStatusData}
+            type="pie"
+            colors={['#10b981', '#3b82f6', '#f59e0b']}
+            className="min-h-[350px]" // Aumentando altura mínima
+          />
+          
+          <ChartCard
+            title="Comissões por Corretor"
+            description="Total de comissões ganhas pelos principais corretores"
+            data={commissionsByAgentData}
+            type="bar"
+          />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ChartCard
-          title="Vendas Mensais"
-          description="Número de imóveis vendidos por mês"
-          data={monthlySalesData}
-          type="area"
-        />
-        
-        <ChartCard
-          title="Imóveis por Status"
-          data={propertiesStatusData}
-          type="pie"
-          colors={['#10b981', '#3b82f6', '#f59e0b']}
-        />
-        
-        <ChartCard
-          title="Comissões por Corretor"
-          description="Total de comissões ganhas pelos principais corretores"
-          data={commissionsByAgentData}
-          type="bar"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <QuickActionCard
-          title="Ações Rápidas"
-          description="Tarefas comuns que você pode querer realizar"
-          actions={quickActions}
-        />
-
-        {/* Cartões adicionais podem ser adicionados aqui no futuro */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <QuickActionCard
+            title="Ações Rápidas"
+            description="Tarefas comuns que você pode querer realizar"
+            actions={quickActions}
+          />
+        </div>
       </div>
     </div>
   );

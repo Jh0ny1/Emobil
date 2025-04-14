@@ -29,6 +29,17 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Configuração para documentos HTML
+// Atualiza o título no index.html
+document.title = "Emobil";
+// Atualiza as meta tags para o novo nome
+const metaTags = document.querySelectorAll('meta[property^="og:title"], meta[property^="twitter:title"]');
+metaTags.forEach(tag => {
+  if (tag.getAttribute('property')?.includes('title')) {
+    tag.setAttribute('content', 'Emobil');
+  }
+});
+
 const AppRoutes = () => {
   return (
     <Routes>

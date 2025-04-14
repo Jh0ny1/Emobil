@@ -26,6 +26,14 @@ const DeleteClientDialog: React.FC<DeleteClientDialogProps> = ({
   onDelete,
   trigger
 }) => {
+  // Fix to prevent event propagation issues
+  const handleDelete = (e: React.MouseEvent) => {
+    // Stop event propagation
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete();
+  };
+
   return (
     <AlertDialog>
       {trigger ? (
@@ -51,7 +59,7 @@ const DeleteClientDialog: React.FC<DeleteClientDialogProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction 
-            onClick={onDelete} 
+            onClick={handleDelete} 
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             <Trash className="h-4 w-4 mr-2" />
