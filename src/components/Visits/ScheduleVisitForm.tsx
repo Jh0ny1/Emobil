@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -37,6 +37,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
+import { ClientType } from '../Clients/ClientCard';
 
 const formSchema = z.object({
   clientId: z.string().min(1, { message: 'Selecione um cliente' }),
@@ -49,15 +50,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Dados fictícios para demonstração
-const mockClients = [
-  { id: '1', name: 'João Silva' },
-  { id: '2', name: 'Maria Oliveira' },
-  { id: '3', name: 'Carlos Santos' },
-  { id: '4', name: 'Ana Pereira' },
-  { id: '5', name: 'Luiz Costa' },
-];
-
+// Dados fictícios para demonstração - Agentes e Propriedades permanecem como dados de exemplo
 const mockAgents = [
   { id: '1', name: 'Pedro Almeida' },
   { id: '2', name: 'Juliana Ferreira' },
@@ -77,6 +70,15 @@ const mockProperties = [
 export default function ScheduleVisitForm() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const [clients, setClients] = useState<ClientType[]>([]);
+
+  // Carregar os clientes do localStorage
+  useEffect(() => {
+    const savedClients = localStorage.getItem('clients');
+    if (savedClients) {
+      setClients(JSON.parse(savedClients));
+    }
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -90,7 +92,7 @@ export default function ScheduleVisitForm() {
     console.log('Dados do agendamento de visita:', data);
     
     // Criar um objeto de visita com base nos valores do formulário
-    const selectedClient = mockClients.find(client => client.id === data.clientId);
+    const selectedClient = clients.find(client => client.id === data.clientId);
     const selectedAgent = mockAgents.find(agent => agent.id === data.agentId);
     const selectedProperty = mockProperties.find(property => property.id === data.propertyId);
     
@@ -164,7 +166,7 @@ export default function ScheduleVisitForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {mockClients.map((client) => (
+                      {clients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}
                         </SelectItem>
