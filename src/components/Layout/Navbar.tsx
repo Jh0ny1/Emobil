@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Search, LogOut, UserCircle } from 'lucide-react';
+import { Search, LogOut, UserCircle } from 'lucide-react';
 import { useTheme } from '../ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -36,11 +36,6 @@ const Navbar: React.FC = () => {
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
             )}
-          </Button>
-          
-          <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs font-bold text-white bg-real-600 rounded-full">3</span>
           </Button>
           
           <div className="flex items-center gap-2">
