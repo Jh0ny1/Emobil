@@ -1,9 +1,8 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Plus, ExternalLink, Download, MoreHorizontal, Upload } from 'lucide-react';
+import { FileText, Plus, ExternalLink, Download, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
@@ -128,11 +127,8 @@ const ContractsList: React.FC = () => {
       date: formattedDate
     };
     
-    // Handle document file if it exists
     if (data.document && data.document.length > 0) {
       const file = data.document[0];
-      // In a real app, we would upload this to a server and get a URL back
-      // For this demo, we'll create a fake URL
       newContract.documentUrl = URL.createObjectURL(file);
     }
     
@@ -155,7 +151,6 @@ const ContractsList: React.FC = () => {
     if (selectedContractId && data.document && data.document.length > 0) {
       const file = data.document[0];
       
-      // Check if file is a PDF
       if (file.type !== 'application/pdf') {
         toast({
           title: "Erro ao fazer upload",
@@ -165,11 +160,8 @@ const ContractsList: React.FC = () => {
         return;
       }
       
-      // In a real app, we would upload this to a server
-      // For this demo, we'll create a URL from the file
       const documentUrl = URL.createObjectURL(file);
       
-      // Update the contract with the document URL
       setContracts(contracts.map(contract => 
         contract.id === selectedContractId 
           ? { ...contract, documentUrl } 
@@ -188,8 +180,6 @@ const ContractsList: React.FC = () => {
 
   const handleDownload = (contract: ContractType) => {
     if (contract.documentUrl) {
-      // In a real app, this would download from the server
-      // For this demo, we'll open the URL in a new tab
       window.open(contract.documentUrl, '_blank');
     } else {
       toast({
@@ -345,7 +335,6 @@ const ContractsList: React.FC = () => {
         </Dialog>
       </div>
 
-      {/* Upload Document Dialog */}
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -428,9 +417,6 @@ const ContractsList: React.FC = () => {
                     </Button>
                     <Button variant="ghost" size="icon">
                       <ExternalLink className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>
