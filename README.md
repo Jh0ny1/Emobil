@@ -1,8 +1,8 @@
 # Bem-vindo ao meu projeto feito com Lovable
 
-## Informações do projeto
+### Informações do projeto
 
-## Como posso editar este código?
+### Como posso editar este código?
 
 Existem várias formas de editar sua aplicação.
 
@@ -28,15 +28,9 @@ npm i
 npm run dev
 ```
 
-**Editar um arquivo diretamente no GitHub**
-
-- Navegue até o(s) arquivo(s) desejado(s).
-- Clique no botão "Editar" (ícone de lápis) no canto superior direito da visualização do arquivo.
-- Faça suas alterações e confirme o commit das mudanças.
-
 **Usar o GitHub Codespaces**
 
-- Vá até a página principal do seu repositório.
+- Vá até a página principal do repositório.
 - Clique no botão "Code" (botão verde) no canto superior direito.
 - Selecione a aba "Codespaces".
 - Clique em "New codespace" para iniciar um novo ambiente Codespace.
